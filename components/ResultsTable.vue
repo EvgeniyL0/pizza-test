@@ -11,7 +11,9 @@
     </thead>
     <tbody>
       <tr v-for="item in list" v-bind:key="item.id">
-        <td>{{ item.name }}</td>
+        <td>
+          <nuxt-link v-bind:to="`/employees/${item.id}`">{{ item.name }}</nuxt-link>
+        </td>
         <td>{{ item.role }}</td>
         <td>{{ item.birthday }}</td>
         <td>{{ item.phone }}</td>
@@ -24,5 +26,5 @@
 <script>
 export default {
   props: ["list"]
-}
+};
 </script>

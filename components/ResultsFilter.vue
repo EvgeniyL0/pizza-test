@@ -1,65 +1,71 @@
 <template>
-  <form>
-    <fieldset>
-      <span>Сортировка по:</span>
-      <label>
-        Имя
+  <div>
+    <form>
+      <fieldset>
+        <span>Сортировка по:</span>
+        <label>
+          Имя
+          <input
+            type="radio"
+            name="sort"
+            value="name"
+            checked
+            v-model="sort"
+            v-on:change="$emit('change-sort', sort)"
+          />
+        </label>
+        <label>
+          Дата рождения
+          <input
+            type="radio"
+            name="sort"
+            value="birthday"
+            v-model="sort"
+            v-on:change="$emit('change-sort', sort)"
+          />
+        </label>
+      </fieldset>
+      <fieldset>
+        <label for="role">Должность</label>
+        <select name="role" v-model="role" v-on:change="$emit('change-role', role)">
+          <option
+            v-for="(item, index) in $store.getters.getRoles"
+            v-bind:key="index"
+            v-bind:value="item"
+          >{{ item }}</option>
+        </select>
+      </fieldset>
+      <fieldset>
+        <label for="status">В архиве</label>
         <input
-          type="radio"
-          name="sort"
-          value="name"
-          checked
-          v-model="sort"
-          v-on:change="$emit('change-sort', sort)"
+          type="checkbox"
+          name="status"
+          v-model="isArchive"
+          v-on:change="$emit('change-status', isArchive)"
         />
-      </label>
-      <label>
-        Дата рождения
-        <input
-          type="radio"
-          name="sort"
-          value="birthday"
-          v-model="sort"
-          v-on:change="$emit('change-sort', sort)"
-        />
-      </label>
-    </fieldset>
-    <fieldset>
-      <label for="role">Должность</label>
-      <select
-        name="role"
-        v-model="role"
-        v-on:change="$emit('change-role', role)"
-      >
-        <option
-          v-for="(item, index) in $store.getters.getRoles"
-          v-bind:key="index"
-          v-bind:value="item"
-        >
-          {{ item }}
-        </option>
-      </select>
-    </fieldset>
-    <fieldset>
-      <label for="status">В архиве</label>
-      <input
-        type="checkbox"
-        name="status"
-        v-model="isArchive"
-        v-on:change="$emit('change-status', isArchive)"
-      />
-    </fieldset>
-  </form>
+      </fieldset>
+      <fieldset>
+        <button type="button" v-on:click="openPopup = true">Новый</button>
+      </fieldset>
+    </form>
+    <add-popup v-if="openPopup" />
+  </div>
 </template>
 
 <script>
+import AddPopup from "../components/AddPopup.vue";
+
 export default {
+  components: {
+    AddPopup
+  },
   data() {
     return {
       sort: "name",
       role: "all",
       isArchive: false,
+      openPopup: false
     };
-  },
+  }
 };
 </script>
