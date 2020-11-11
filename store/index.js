@@ -14,10 +14,6 @@ export const getters = {
       if (!roles.includes(item.role)) roles.push(item.role);
     });
     return roles;
-  },
-  getLastId(state) {
-    const numberOfEmployees = state.employees.length;
-    return state.employees[numberOfEmployees - 1].id;
   }
 };
 
@@ -50,6 +46,6 @@ export const actions = {
       })
   },
   addItem(context, payload) {
-    context.commit('addItem', payload);
+    context.commit('addItem', Object.assign({}, payload));
   }
 };
