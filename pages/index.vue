@@ -61,4 +61,7 @@ export default {
 </script>
 
 <style>
+.root {
+  font-family: "Source Sans Pro", sans-serif;
+}
 </style>

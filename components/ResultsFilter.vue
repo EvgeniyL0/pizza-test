@@ -1,10 +1,9 @@
 <template>
-  <div>
-    <form>
+  <div class="filter">
+    <form class="filter__form">
       <fieldset>
-        <span>Сортировка по:</span>
-        <label>
-          Имя
+        <span>Sort by:</span>
+        <label class="filter__custom-radio">
           <input
             type="radio"
             name="sort"
@@ -13,9 +12,9 @@
             v-model="sort"
             v-on:change="$emit('change-sort', sort)"
           />
+          <span>Name</span>
         </label>
-        <label>
-          Дата рождения
+        <label class="filter__custom-radio">
           <input
             type="radio"
             name="sort"
@@ -23,10 +22,11 @@
             v-model="sort"
             v-on:change="$emit('change-sort', sort)"
           />
+          <span>Birthday</span>
         </label>
       </fieldset>
       <fieldset>
-        <label for="role">Должность</label>
+        <label for="role">Role:</label>
         <select name="role" v-model="role" v-on:change="$emit('change-role', role)">
           <option
             v-for="(item, index) in $store.getters.getRoles"
@@ -36,19 +36,21 @@
         </select>
       </fieldset>
       <fieldset>
-        <label for="status">В архиве</label>
-        <input
-          type="checkbox"
-          name="status"
-          v-model="isArchive"
-          v-on:change="$emit('change-status', isArchive)"
-        />
+        <label class="filter__custom-checkbox">
+          <input
+            type="checkbox"
+            name="status"
+            v-model="isArchive"
+            v-on:change="$emit('change-status', isArchive)"
+          />
+          <span>In archive</span>
+        </label>
       </fieldset>
       <fieldset>
-        <button type="button" v-on:click="openPopup = true">Новый</button>
+        <button type="button" class="filter__button" v-on:click="openPopup = true">Add new</button>
       </fieldset>
     </form>
-    <add-popup v-if="openPopup" />
+    <add-popup v-if="openPopup" v-on:add-new="addNewEmployee" v-on:close-popup="openPopup = false" />
   </div>
 </template>
 
@@ -66,6 +68,103 @@ export default {
       isArchive: false,
       openPopup: false
     };
+  },
+  methods: {
+    addNewEmployee(newEmployee) {
+      newEmployee.id += 1;
+      this.$store.dispatch("addItem", newEmployee).then(res => {
+        this.openPopup = false;
+        console.log(res);
+      });
+    }
   }
 };
 </script>
+
+<style>
+.filter {
+  height: 50px;
+  display: flex;
+}
+
+.filter__form {
+  width: 80%;
+  margin: auto;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.filter__form fieldset {
+  padding: 0;
+  border: none;
+}
+
+.filter__custom-radio {
+  cursor: pointer;
+}
+
+.filter__custom-radio > input {
+  position: absolute;
+  z-index: -1;
+  opacity: 0;
+}
+
+.filter__custom-radio > span {
+  display: inline-block;
+  text-align: center;
+  min-width: 60px;
+  padding: 5px;
+  border-radius: 2px;
+}
+
+.filter__custom-radio > input:checked + span {
+  background-color: #00a11e;
+  color: white;
+}
+
+.filter__custom-checkbox {
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+}
+
+.filter__custom-checkbox > input {
+  position: absolute;
+  z-index: -1;
+  opacity: 0;
+}
+
+.filter__custom-checkbox > span::before {
+  content: "";
+  display: inline-block;
+  box-sizing: border-box;
+  width: 14px;
+  height: 14px;
+  margin-right: 8px;
+  border: 1px solid #a9a9a9;
+  background-position: center;
+  background-size: contain;
+  background-repeat: no-repeat;
+}
+
+.filter__custom-checkbox > input:checked + span::before {
+  background-color: #00a11e;
+  background-image: url("../assets/images/checked.svg");
+  border: none;
+}
+
+.filter__button {
+  height: 32px;
+  background-color: #00a11e;
+  color: white;
+  border: none;
+  border-radius: 2px;
+  cursor: pointer;
+  display: inline-block;
+}
+
+.filter__button:hover {
+  background-color: #007e17;
+}
+</style>

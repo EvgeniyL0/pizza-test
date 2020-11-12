@@ -1,4 +1,4 @@
-import { getEmployees, editEmployee } from '../assets/request.js';
+import { getEmployees, editEmployee, addEmployee } from '../assets/request.js';
 
 export const state = () => ({
   employees: []
@@ -46,6 +46,10 @@ export const actions = {
       })
   },
   addItem(context, payload) {
-    context.commit('addItem', Object.assign({}, payload));
+    return addEmployee()
+      .then(res => {
+        context.commit('addItem', Object.assign({}, payload));
+        return res;
+      })
   }
 };
