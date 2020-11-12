@@ -2,11 +2,11 @@
   <table class="results-table">
     <thead>
       <tr class="results-table__row">
-        <th>Name</th>
-        <th>Role</th>
-        <th>Birthday</th>
-        <th>Phone</th>
-        <th>In archive</th>
+        <th>Имя</th>
+        <th>Должность</th>
+        <th>Дата рожд.</th>
+        <th>Телефон</th>
+        <th>В архиве</th>
         <th></th>
       </tr>
     </thead>
@@ -18,7 +18,9 @@
         <td>{{ item.phone }}</td>
         <td>{{ item.isArchive }}</td>
         <td>
-          <nuxt-link v-bind:to="`/employees/${item.id}`">Edit</nuxt-link>
+          <nuxt-link v-bind:to="`/employees/${item.id}`">
+            <img src="../assets/images/edit.svg" alt="edit-icon" />
+          </nuxt-link>
         </td>
       </tr>
     </tbody>
@@ -27,7 +29,7 @@
 
 <script>
 export default {
-  props: ["list"]
+  props: ["list"],
 };
 </script>
 

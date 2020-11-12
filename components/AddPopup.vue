@@ -1,22 +1,46 @@
 <template>
   <div class="add-popup" v-on:click.self="$emit('close-popup')">
     <form class="add-popup__form">
-      <span>Форма добавления нового сотрудника</span>
+      <img
+        class="add-popup__close-icon"
+        src="../assets/images/close.svg"
+        alt="close-icon"
+        v-on:click="$emit('close-popup')"
+      />
       <fieldset>
-        <label for="name">Фамилия и Имя:</label>
-        <input type="text" name="name" v-model="newEmployee.name" />
+        <input
+          type="text"
+          name="name"
+          placeholder="Фамилия и Имя"
+          v-model="newEmployee.name"
+        />
+        <span class="add-popup__error-message" v-show="!validation.name"
+          >Введите фамилию и имя</span
+        >
       </fieldset>
-      <span v-show="!validation.name">Введите фамилию и имя</span>
       <fieldset>
-        <label for="phone">Телефон:</label>
-        <input type="tel" name="phone" v-model="newEmployee.phone" />
+        <input
+          type="tel"
+          name="phone"
+          placeholder="Телефон"
+          v-model="newEmployee.phone"
+        />
+        <span class="add-popup__error-message" v-show="!validation.phone"
+          >Введите телефон в формате +7 (ххх) ххх-хххх</span
+        >
       </fieldset>
-      <span v-show="!validation.phone">Введите телефон в формате +7 (ххх) ххх-хххх</span>
       <fieldset>
-        <label for="birthday">Дата рожд.:</label>
-        <input type="text" name="birthday" class="add-popup__input" v-model="newEmployee.birthday" />
+        <input
+          type="text"
+          name="birthday"
+          class="add-popup__input"
+          placeholder="Дата рожд."
+          v-model="newEmployee.birthday"
+        />
+        <span class="add-popup__error-message" v-show="!validation.birthday"
+          >Введите дату в формате ДД.ММ.ГГГГ</span
+        >
       </fieldset>
-      <span>Введите дату в формате ДД.ММ.ГГГГ</span>
       <fieldset>
         <label for="role">Должность:</label>
         <select name="role" v-model="newEmployee.role">
@@ -24,21 +48,27 @@
             v-for="(item, index) in $store.getters.getRoles"
             v-bind:key="index"
             v-bind:value="item"
-          >{{ item }}</option>
+          >
+            {{ item }}
+          </option>
         </select>
+        <span class="add-popup__error-message" v-show="!validation.role"
+          >Выберите должность</span
+        >
       </fieldset>
-      <button class="add-popup__button"
+      <button
+        class="add-popup__button"
         v-on:click.prevent="$emit('add-new', newEmployee)"
         v-bind:disabled="formValidity"
-      >Добавить</button>
+      >
+        Добавить
+      </button>
     </form>
   </div>
 </template>
 
 <script>
-const regexpName = /^[А-ЯЁ][а-яё]+(-[А-ЯЁ][а-яё]+)?\s[А-ЯЁ][а-яё]+(-[А-ЯЁ][а-яё]+)?$/;
-const regexpPhone = /^\+7\s\(\d{3}\)\s\d{3}-\d{4}$/;
-const regexpDate = /^(0[1-9]|[12][0-9]|3[01])\.(0[1-9]|1[0-2])\.(19|20)\d\d$/;
+import { regexpName, regexpPhone, regexpDate } from "../assets/constants.js";
 
 export default {
   data() {
@@ -49,8 +79,8 @@ export default {
         isArchive: false,
         role: "",
         phone: "",
-        birthday: ""
-      }
+        birthday: "",
+      },
     };
   },
   computed: {
@@ -59,18 +89,18 @@ export default {
         name: regexpName.test(this.newEmployee.name),
         phone: regexpPhone.test(this.newEmployee.phone),
         birthday: regexpDate.test(this.newEmployee.birthday),
-        role: this.newEmployee.role !== ""
+        role: this.newEmployee.role !== "",
       };
     },
     formValidity() {
       const values = Object.values(this.validation);
-      return values.some(item => item === false);
-    }
+      return values.some((item) => item === false);
+    },
   },
   created() {
     const numberOfItems = this.$store.state.employees.length;
     this.newEmployee.id = this.$store.state.employees[numberOfItems - 1].id;
-  }
+  },
 };
 </script>
 
@@ -87,40 +117,45 @@ export default {
   justify-content: center;
 }
 
-.add-popup input {
-  width: 60%;
-  height: 30px;
-}
-
-.add-popup select {
-  width: 60%;
-  height: 30px;
-  box-sizing: content-box;
-}
-
 .add-popup__form {
+  position: relative;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
+  align-items: center;
   width: 430px;
-  height: 450px;
+  min-height: 430px;
   padding: 30px;
   background-color: white;
   border-radius: 4px;
   text-align: center;
 }
 
+.add-popup input {
+  width: 300px;
+  height: 30px;
+  padding-left: 5px;
+  margin-left: 20px;
+}
+
+.add-popup select {
+  width: 180px;
+  height: 30px;
+  margin-top: 10px;
+  box-sizing: content-box;
+}
+
 .add-popup__form fieldset {
   display: flex;
-  justify-content: space-between;
-  align-items: center;
+  flex-direction: column;
+  justify-content: flex-start;
   border: none;
   padding: 0;
 }
 
 .add-popup__button {
-  width: 150px;
-  height: 32px;
+  width: 250px;
+  height: 50px;
   background-color: #00a11e;
   color: white;
   border: none;
@@ -131,5 +166,21 @@ export default {
 
 .add-popup__button:hover {
   background-color: #007e17;
+}
+
+.add-popup__button:disabled {
+  background-color: #a9a9a9;
+}
+
+.add-popup__close-icon {
+  position: absolute;
+  top: -27px;
+  right: -27px;
+  cursor: pointer;
+}
+
+.add-popup__error-message {
+  font-size: 16px;
+  color: red;
 }
 </style>

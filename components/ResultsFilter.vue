@@ -2,7 +2,7 @@
   <div class="filter">
     <form class="filter__form">
       <fieldset>
-        <span>Sort by:</span>
+        <span>Сортировать по:</span>
         <label class="filter__custom-radio">
           <input
             type="radio"
@@ -12,7 +12,7 @@
             v-model="sort"
             v-on:change="$emit('change-sort', sort)"
           />
-          <span>Name</span>
+          <span>Имя</span>
         </label>
         <label class="filter__custom-radio">
           <input
@@ -22,17 +22,23 @@
             v-model="sort"
             v-on:change="$emit('change-sort', sort)"
           />
-          <span>Birthday</span>
+          <span>Дата рожд.</span>
         </label>
       </fieldset>
       <fieldset>
-        <label for="role">Role:</label>
-        <select name="role" v-model="role" v-on:change="$emit('change-role', role)">
+        <label for="role">Должность:</label>
+        <select
+          name="role"
+          v-model="role"
+          v-on:change="$emit('change-role', role)"
+        >
           <option
             v-for="(item, index) in $store.getters.getRoles"
             v-bind:key="index"
             v-bind:value="item"
-          >{{ item }}</option>
+          >
+            {{ item }}
+          </option>
         </select>
       </fieldset>
       <fieldset>
@@ -43,14 +49,24 @@
             v-model="isArchive"
             v-on:change="$emit('change-status', isArchive)"
           />
-          <span>In archive</span>
+          <span>В архиве</span>
         </label>
       </fieldset>
       <fieldset>
-        <button type="button" class="filter__button" v-on:click="openPopup = true">Add new</button>
+        <button
+          type="button"
+          class="filter__button"
+          v-on:click="openPopup = true"
+        >
+          Новый сотрудник
+        </button>
       </fieldset>
     </form>
-    <add-popup v-if="openPopup" v-on:add-new="addNewEmployee" v-on:close-popup="openPopup = false" />
+    <add-popup
+      v-if="openPopup"
+      v-on:add-new="addNewEmployee"
+      v-on:close-popup="openPopup = false"
+    />
   </div>
 </template>
 
@@ -59,25 +75,25 @@ import AddPopup from "../components/AddPopup.vue";
 
 export default {
   components: {
-    AddPopup
+    AddPopup,
   },
   data() {
     return {
       sort: "name",
       role: "all",
       isArchive: false,
-      openPopup: false
+      openPopup: false,
     };
   },
   methods: {
     addNewEmployee(newEmployee) {
       newEmployee.id += 1;
-      this.$store.dispatch("addItem", newEmployee).then(res => {
+      this.$store.dispatch("addItem", newEmployee).then((res) => {
         this.openPopup = false;
         console.log(res);
       });
-    }
-  }
+    },
+  },
 };
 </script>
 
