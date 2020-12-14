@@ -52,4 +52,17 @@ export default {
 .results-table__row:nth-child(even) {
   background-color: #f8f9fa;
 }
+
+@media screen and (max-width: 768px) {
+  .results-table {
+    width: 100%;
+    font-size: 14px
+  }
+}
+
+@media screen and (max-width: 425px) {
+  .results-table {
+    font-size: 12px;
+  }
+}
 </style>

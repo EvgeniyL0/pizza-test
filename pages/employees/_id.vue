@@ -1,47 +1,33 @@
 <template>
   <div class="profile">
-    <form class="profile__form">
+    <form class="profile__form" v-on:submit.prevent="updateData">
       <input type="text" name="name" v-model="employee.name" />
-      <span class="profile__error-message" v-show="!validation.name"
-        >Введите фамилию и имя</span
-      >
+      <span class="profile__error-message" v-show="!validation.name">Введите фамилию и имя</span>
       <input type="text" name="phone" v-model="employee.phone" />
-      <span class="profile__error-message" v-show="!validation.phone"
-        >Введите телефон в формате +7 (ххх) ххх-хххх</span
-      >
+      <span
+        class="profile__error-message"
+        v-show="!validation.phone"
+      >Введите телефон в формате +7 (ххх) ххх-хххх</span>
       <input type="text" name="birthday" v-model="employee.birthday" />
-      <span class="profile__error-message" v-show="!validation.birthday"
-        >Введите дату в формате ДД.ММ.ГГГГ</span
-      >
+      <span
+        class="profile__error-message"
+        v-show="!validation.birthday"
+      >Введите дату в формате ДД.ММ.ГГГГ</span>
       <select name="role" v-model="employee.role">
         <option
           v-for="(item, index) in $store.getters.getRoles"
           v-bind:key="index"
           v-bind:value="item"
-        >
-          {{ item }}
-        </option>
+        >{{ item }}</option>
       </select>
       <label class="profile__custom-checkbox">
         <input type="checkbox" name="status" v-model="employee.isArchive" />
         <span>В архиве</span>
       </label>
-      <button
-        class="profile__button"
-        v-on:click.prevent="updateData"
-        v-bind:disabled="formValidity"
-      >
-        Сохранить
-      </button>
-      <button class="profile__button" v-on:click.prevent="$router.push('/')">
-        Отмена
-      </button>
+      <button class="profile__button" type="submit" v-bind:disabled="notValid">Сохранить</button>
+      <button class="profile__button" v-on:click.prevent="$router.push('/')">Отмена</button>
     </form>
-    <img
-      src="../../assets/images/avatar.png"
-      alt="employee-avatar"
-      class="profile__avatar"
-    />
+    <img src="../../assets/images/avatar.png" alt="employee-avatar" class="profile__avatar" />
   </div>
 </template>
 
@@ -51,14 +37,7 @@ import { regexpName, regexpPhone, regexpDate } from "../../assets/constants.js";
 export default {
   data() {
     return {
-      employee: {
-        id: "",
-        name: "",
-        isArchive: false,
-        role: "",
-        phone: "",
-        birthday: "",
-      },
+      employee: {}
     };
   },
   computed: {
@@ -66,39 +45,39 @@ export default {
       return {
         name: regexpName.test(this.employee.name),
         phone: regexpPhone.test(this.employee.phone),
-        birthday: regexpDate.test(this.employee.birthday),
+        birthday: regexpDate.test(this.employee.birthday)
       };
     },
-    formValidity() {
+    notValid() {
       const values = Object.values(this.validation);
-      return values.some((item) => item === false);
-    },
+      return values.some(item => item === false);
+    }
   },
   methods: {
     updateData() {
-      this.$store.dispatch("editItem", this.employee).then((res) => {
+      this.$store.dispatch("editItem", this.employee).then(res => {
         console.log(res);
         this.$router.push("/");
       });
-    },
+    }
   },
   created() {
     Object.assign(
       this.employee,
       this.$store.getters.getEmployee(this.$route.params.id)
     );
-  },
+  }
 };
 </script>
 
 <style>
 .profile {
-  width: 30%;
+  width: 70%;
   margin-left: auto;
   margin-top: 80px;
   margin-right: auto;
   display: flex;
-  justify-content: space-between;
+  justify-content: center;
   font-family: "Source Sans Pro", sans-serif;
 }
 
@@ -111,12 +90,12 @@ export default {
 
 .profile__form {
   position: relative;
-  width: 430px;
   min-height: 430px;
-  padding: 30px;
   background-color: white;
   border-radius: 4px;
-  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
 .profile input {
@@ -205,5 +184,31 @@ export default {
   display: block;
   font-size: 16px;
   color: red;
+}
+
+@media screen and (max-width: 768px) {
+  .profile {
+    font-size: 14px;
+  }
+
+  .profile__error-message {
+    font-size: 14px;
+  }
+}
+
+@media screen and (max-width: 625px) {
+  .profile {
+    flex-direction: column;
+    align-items: center;
+    margin-top: 30px;
+  }
+
+  .profile__form {
+    order: 1;
+  }
+
+  .profile__avatar {
+    order: 0;
+  }
 }
 </style>

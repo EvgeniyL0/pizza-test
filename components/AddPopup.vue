@@ -1,6 +1,6 @@
 <template>
-  <div class="add-popup" v-on:click.self="$emit('close-popup')">
-    <form class="add-popup__form">
+  <div class="add-popup">
+    <form class="add-popup__form" v-on:submit.prevent="checkValidation">
       <img
         class="add-popup__close-icon"
         src="../assets/images/close.svg"
@@ -11,8 +11,9 @@
         <input
           type="text"
           name="name"
-          placeholder="Фамилия и Имя"
+          placeholder="Фамилия Имя"
           v-model="newEmployee.name"
+          v-on:input.once="firstLoad = false"
         />
         <span class="add-popup__error-message" v-show="!validation.name"
           >Введите фамилию и имя</span
@@ -24,6 +25,7 @@
           name="phone"
           placeholder="Телефон"
           v-model="newEmployee.phone"
+          v-on:input.once="firstLoad = false"
         />
         <span class="add-popup__error-message" v-show="!validation.phone"
           >Введите телефон в формате +7 (ххх) ххх-хххх</span
@@ -34,8 +36,9 @@
           type="text"
           name="birthday"
           class="add-popup__input"
-          placeholder="Дата рожд."
+          placeholder="Дата рождения"
           v-model="newEmployee.birthday"
+          v-on:input.once="firstLoad = false"
         />
         <span class="add-popup__error-message" v-show="!validation.birthday"
           >Введите дату в формате ДД.ММ.ГГГГ</span
@@ -58,8 +61,8 @@
       </fieldset>
       <button
         class="add-popup__button"
-        v-on:click.prevent="$emit('add-new', newEmployee)"
-        v-bind:disabled="formValidity"
+        type="submit"
+        v-bind:disabled="notValid"
       >
         Добавить
       </button>
@@ -80,7 +83,7 @@ export default {
         role: "",
         phone: "",
         birthday: "",
-      },
+      }
     };
   },
   computed: {
@@ -92,10 +95,17 @@ export default {
         role: this.newEmployee.role !== "",
       };
     },
-    formValidity() {
+    notValid() {
       const values = Object.values(this.validation);
       return values.some((item) => item === false);
     },
+  },
+  methods: {
+    checkValidation() {
+      if (!this.notValid) {
+        this.$emit('add-new', this.newEmployee);
+      }
+    }
   },
   created() {
     const numberOfItems = this.$store.state.employees.length;
@@ -131,11 +141,18 @@ export default {
   text-align: center;
 }
 
+.add-popup__form fieldset {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  border: none;
+  padding: 0;
+}
+
 .add-popup input {
   width: 300px;
   height: 30px;
   padding-left: 5px;
-  margin-left: 20px;
 }
 
 .add-popup select {
@@ -143,14 +160,6 @@ export default {
   height: 30px;
   margin-top: 10px;
   box-sizing: content-box;
-}
-
-.add-popup__form fieldset {
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-start;
-  border: none;
-  padding: 0;
 }
 
 .add-popup__button {
@@ -182,5 +191,45 @@ export default {
 .add-popup__error-message {
   font-size: 16px;
   color: red;
+}
+
+@media screen and (max-width: 768px) {
+  .add-popup__form {
+    width: 350px;
+  }
+}
+
+@media screen and (max-width: 580px) {
+  .add-popup__form {
+    width: 300px;
+    padding-left: 10px;
+    padding-right: 10px;
+    font-size: 14px;
+  }
+
+  .add-popup input {
+    width: 230px;
+  }
+
+  .add-popup__error-message {
+    font-size: 14px;
+  }
+
+  .add-popup__button {
+    width: 200px;
+  }
+
+  .add-popup__close-icon {
+    top: -20px;
+    right: -20px;
+    width: 20px;
+    height: 20px;
+  }
+}
+
+@media screen and (max-width: 425px){
+  .add-popup__form {
+    width: 280px;
+  }
 }
 </style>

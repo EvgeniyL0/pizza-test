@@ -27,18 +27,12 @@
       </fieldset>
       <fieldset>
         <label for="role">Должность:</label>
-        <select
-          name="role"
-          v-model="role"
-          v-on:change="$emit('change-role', role)"
-        >
+        <select name="role" v-model="role" v-on:change="$emit('change-role', role)">
           <option
             v-for="(item, index) in $store.getters.getRoles"
             v-bind:key="index"
             v-bind:value="item"
-          >
-            {{ item }}
-          </option>
+          >{{ item }}</option>
         </select>
       </fieldset>
       <fieldset>
@@ -53,20 +47,10 @@
         </label>
       </fieldset>
       <fieldset>
-        <button
-          type="button"
-          class="filter__button"
-          v-on:click="openPopup = true"
-        >
-          Новый сотрудник
-        </button>
+        <button type="button" class="filter__button" v-on:click="openPopup = true">+</button>
       </fieldset>
     </form>
-    <add-popup
-      v-if="openPopup"
-      v-on:add-new="addNewEmployee"
-      v-on:close-popup="openPopup = false"
-    />
+    <add-popup v-if="openPopup" v-on:add-new="addNewEmployee" v-on:close-popup="openPopup = false" />
   </div>
 </template>
 
@@ -75,37 +59,41 @@ import AddPopup from "../components/AddPopup.vue";
 
 export default {
   components: {
-    AddPopup,
+    AddPopup
   },
   data() {
     return {
       sort: "name",
       role: "all",
       isArchive: false,
-      openPopup: false,
+      openPopup: false
     };
   },
   methods: {
     addNewEmployee(newEmployee) {
       newEmployee.id += 1;
-      this.$store.dispatch("addItem", newEmployee).then((res) => {
+      this.$store.dispatch("addItem", newEmployee).then(res => {
         this.openPopup = false;
         console.log(res);
       });
-    },
-  },
+    }
+  }
 };
 </script>
 
 <style>
 .filter {
-  height: 50px;
+  margin-top: 20px;
+  margin-bottom: 20px;
   display: flex;
 }
 
 .filter__form {
   width: 80%;
-  margin: auto;
+  margin-left: auto;
+  margin-top: 0;
+  margin-right: auto;
+  margin-bottom: 0;
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -128,15 +116,13 @@ export default {
 
 .filter__custom-radio > span {
   display: inline-block;
+  margin-left: 5px;
   text-align: center;
-  min-width: 60px;
-  padding: 5px;
   border-radius: 2px;
 }
 
 .filter__custom-radio > input:checked + span {
-  background-color: #00a11e;
-  color: white;
+  font-weight: bold;
 }
 
 .filter__custom-checkbox {
@@ -171,16 +157,57 @@ export default {
 }
 
 .filter__button {
-  height: 32px;
+  width: 60px;
+  height: 30px;
   background-color: #00a11e;
+  font-weight: bold;
   color: white;
   border: none;
-  border-radius: 2px;
+  border-radius: 6px;
   cursor: pointer;
   display: inline-block;
 }
 
 .filter__button:hover {
   background-color: #007e17;
+}
+
+@media screen and (max-width: 1024px) {
+  .filter__form {
+    width: 90%;
+  }
+}
+
+@media screen and (max-width: 768px) {
+  .filter__form {
+    font-size: 14px;
+  }
+
+  .filter__custom-radio > span {
+    margin-left: 3px;
+  }
+
+  .filter__button {
+    width: 50px;
+  }
+}
+
+@media screen and (max-width: 580px) {
+  .filter {
+    margin-bottom: 10px;
+  }
+
+  .filter__form {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .filter__form fieldset {
+    margin-bottom: 20px;
+  }
+
+  .filter__form fieldset:last-of-type {
+    margin-bottom: 0;
+  }
 }
 </style>
