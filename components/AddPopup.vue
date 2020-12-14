@@ -163,12 +163,12 @@ export default {
 }
 
 .add-popup__button {
-  width: 250px;
+  width: 230px;
   height: 50px;
   background-color: #00a11e;
   color: white;
   border: none;
-  border-radius: 2px;
+  border-radius: 6px;
   cursor: pointer;
   display: inline-block;
 }

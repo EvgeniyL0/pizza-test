@@ -18,7 +18,7 @@
         <td>{{ item.phone }}</td>
         <td>{{ item.isArchive }}</td>
         <td>
-          <nuxt-link v-bind:to="`/employees/${item.id}`">
+          <nuxt-link v-bind:to="{ name: 'employees', params: { id: `${item.id}`, roles: `${$store.getters.getRoles}`}}">
             <img src="../assets/images/edit.svg" alt="edit-icon" />
           </nuxt-link>
         </td>

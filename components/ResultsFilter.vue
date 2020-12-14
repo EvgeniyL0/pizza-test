@@ -27,12 +27,18 @@
       </fieldset>
       <fieldset>
         <label for="role">Должность:</label>
-        <select name="role" v-model="role" v-on:change="$emit('change-role', role)">
+        <select
+          name="role"
+          v-model="role"
+          v-on:change="$emit('change-role', role)"
+        >
           <option
             v-for="(item, index) in $store.getters.getRoles"
             v-bind:key="index"
             v-bind:value="item"
-          >{{ item }}</option>
+          >
+            {{ item }}
+          </option>
         </select>
       </fieldset>
       <fieldset>
@@ -47,10 +53,20 @@
         </label>
       </fieldset>
       <fieldset>
-        <button type="button" class="filter__button" v-on:click="openPopup = true">+</button>
+        <button
+          type="button"
+          class="filter__button"
+          v-on:click="openPopup = true"
+        >
+          +
+        </button>
       </fieldset>
     </form>
-    <add-popup v-if="openPopup" v-on:add-new="addNewEmployee" v-on:close-popup="openPopup = false" />
+    <add-popup
+      v-if="openPopup"
+      v-on:add-new="addNewEmployee"
+      v-on:close-popup="openPopup = false"
+    />
   </div>
 </template>
 
@@ -59,25 +75,29 @@ import AddPopup from "../components/AddPopup.vue";
 
 export default {
   components: {
-    AddPopup
+    AddPopup,
   },
   data() {
     return {
       sort: "name",
       role: "all",
       isArchive: false,
-      openPopup: false
+      openPopup: false,
     };
   },
   methods: {
     addNewEmployee(newEmployee) {
       newEmployee.id += 1;
-      this.$store.dispatch("addItem", newEmployee).then(res => {
-        this.openPopup = false;
-        console.log(res);
-      });
-    }
-  }
+      this.$store
+        .dispatch("addItem", newEmployee)
+        .then(() => {
+          this.openPopup = false;
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    },
+  },
 };
 </script>
 

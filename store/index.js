@@ -31,7 +31,11 @@ export const mutations = {
 
 export const actions = {
   copyItemsToStore(context) {
-    return getEmployees()
+    return fetch('https://pizza-base-22029-default-rtdb.firebaseio.com/employees.json')
+      .then(res => {
+        if (res.ok) return res.json();
+        return Promise.reject(`${res.status} ${res.statusText}`);
+      })
       .then(data => {
         data.forEach(item => {
           context.commit('addItem', Object.assign({}, item));
@@ -39,17 +43,27 @@ export const actions = {
       })
   },
   editItem(context, payload) {
-    return editEmployee()
+    return fetch(`https://pizza-base-22029-default-rtdb.firebaseio.com/employees/${payload.id - 1}.json`, {
+      method: "PATCH",
+      body: JSON.stringify(payload)
+    })
       .then(res => {
-        context.commit('editItem', payload);
-        return res;
+        if (res.ok) {
+          return context.commit('editItem', payload);
+        }
+        return Promise.reject(`${res.status} ${res.statusText}`);
       })
   },
   addItem(context, payload) {
-    return addEmployee()
+    return fetch(`https://pizza-base-22029-default-rtdb.firebaseio.com/employees/${payload.id - 1}.json`, {
+      method: "PUT",
+      body: JSON.stringify(payload)
+    })
       .then(res => {
-        context.commit('addItem', Object.assign({}, payload));
-        return res;
+        if (res.ok) {
+          return context.commit('addItem', Object.assign({}, payload));
+        }
+        return Promise.reject(`${res.status} ${res.statusText}`);
       })
   }
 };

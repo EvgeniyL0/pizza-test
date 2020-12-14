@@ -2,32 +2,48 @@
   <div class="profile">
     <form class="profile__form" v-on:submit.prevent="updateData">
       <input type="text" name="name" v-model="employee.name" />
-      <span class="profile__error-message" v-show="!validation.name">Введите фамилию и имя</span>
+      <span class="profile__error-message" v-show="!validation.name"
+        >Введите фамилию и имя</span
+      >
       <input type="text" name="phone" v-model="employee.phone" />
-      <span
-        class="profile__error-message"
-        v-show="!validation.phone"
-      >Введите телефон в формате +7 (ххх) ххх-хххх</span>
+      <span class="profile__error-message" v-show="!validation.phone"
+        >Введите телефон в формате +7 (ххх) ххх-хххх</span
+      >
       <input type="text" name="birthday" v-model="employee.birthday" />
-      <span
-        class="profile__error-message"
-        v-show="!validation.birthday"
-      >Введите дату в формате ДД.ММ.ГГГГ</span>
+      <span class="profile__error-message" v-show="!validation.birthday"
+        >Введите дату в формате ДД.ММ.ГГГГ</span
+      >
       <select name="role" v-model="employee.role">
         <option
-          v-for="(item, index) in $store.getters.getRoles"
+          v-for="(item, index) in $route.params.roles"
           v-bind:key="index"
           v-bind:value="item"
-        >{{ item }}</option>
+        >
+          {{ item }}
+        </option>
       </select>
       <label class="profile__custom-checkbox">
         <input type="checkbox" name="status" v-model="employee.isArchive" />
         <span>В архиве</span>
       </label>
-      <button class="profile__button" type="submit" v-bind:disabled="notValid">Сохранить</button>
-      <button class="profile__button" v-on:click.prevent="$router.push('/')">Отмена</button>
+      <fieldset>
+        <button
+          class="profile__button"
+          type="submit"
+          v-bind:disabled="notValid"
+        >
+          Сохранить
+        </button>
+        <button class="profile__button" v-on:click.prevent="$router.push('/')">
+          Отмена
+        </button>
+      </fieldset>
     </form>
-    <img src="../../assets/images/avatar.png" alt="employee-avatar" class="profile__avatar" />
+    <img
+      src="../../assets/images/avatar.png"
+      alt="employee-avatar"
+      class="profile__avatar"
+    />
   </div>
 </template>
 
@@ -37,7 +53,7 @@ import { regexpName, regexpPhone, regexpDate } from "../../assets/constants.js";
 export default {
   data() {
     return {
-      employee: {}
+      employee: {},
     };
   },
   computed: {
@@ -45,28 +61,58 @@ export default {
       return {
         name: regexpName.test(this.employee.name),
         phone: regexpPhone.test(this.employee.phone),
-        birthday: regexpDate.test(this.employee.birthday)
+        birthday: regexpDate.test(this.employee.birthday),
       };
     },
     notValid() {
       const values = Object.values(this.validation);
-      return values.some(item => item === false);
-    }
+      return values.some((item) => item === false);
+    },
   },
   methods: {
+    getData() {
+      return fetch(
+        `https://pizza-base-22029-default-rtdb.firebaseio.com/employees/${
+          this.$route.params.id - 1
+        }.json`
+      )
+        .then((res) => {
+          if (res.ok) return res.json();
+          return Promise.reject(`${res.status} ${res.statusText}`);
+        })
+        .then((data) => {
+          console.log(data);
+          Object.assign(this.employee, data);
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    },
     updateData() {
-      this.$store.dispatch("editItem", this.employee).then(res => {
-        console.log(res);
-        this.$router.push("/");
-      });
-    }
+      this.$store
+        .dispatch("editItem", this.employee)
+        .then(() => {
+          this.$router.push("/");
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    },
   },
-  created() {
-    Object.assign(
-      this.employee,
-      this.$store.getters.getEmployee(this.$route.params.id)
-    );
-  }
+  async fetch() {
+    this.employee = await fetch(
+      `https://pizza-base-22029-default-rtdb.firebaseio.com/employees/${
+        this.$route.params.id - 1
+      }.json`
+    )
+      .then((res) => {
+        if (res.ok) return res.json();
+        return Promise.reject(`${res.status} ${res.statusText}`);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  },
 };
 </script>
 
@@ -85,12 +131,12 @@ export default {
   width: 128px;
   height: 128px;
   object-fit: cover;
+  margin-left: 20px;
   margin-top: 20px;
 }
 
 .profile__form {
   position: relative;
-  min-height: 430px;
   background-color: white;
   border-radius: 4px;
   display: flex;
@@ -116,9 +162,8 @@ export default {
 
 .profile__form fieldset {
   display: flex;
-  flex-direction: column;
-  align-items: center;
-  width: 100%;
+  justify-content: space-between;
+  width: 90%;
   border: none;
   padding: 0;
 }
@@ -159,13 +204,11 @@ export default {
 .profile__button {
   width: 100px;
   height: 40px;
-  margin-right: 20px;
   background-color: #00a11e;
   color: white;
   border: none;
-  border-radius: 2px;
+  border-radius: 6px;
   cursor: pointer;
-  display: inline;
 }
 
 .profile__button:hover {
@@ -174,10 +217,6 @@ export default {
 
 .profile__button:disabled {
   background-color: #a9a9a9;
-}
-
-.profile__button:last-of-type {
-  margin-right: 0;
 }
 
 .profile__error-message {
@@ -209,6 +248,7 @@ export default {
 
   .profile__avatar {
     order: 0;
+    margin: 0;
   }
 }
 </style>

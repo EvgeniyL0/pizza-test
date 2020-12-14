@@ -5,7 +5,7 @@ const delay = parseInt(Math.random() * 1000);
 export const getEmployees = () =>
 	new Promise((resolve) => {
 		setTimeout(() => {
-			resolve(employees);
+			resolve(JSON.parse(employees));
 		}, delay);
 	});
 

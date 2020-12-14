@@ -55,7 +55,9 @@ export default {
     },
   },
   created() {
-    this.$store.dispatch("copyItemsToStore");
+    this.$store.dispatch("copyItemsToStore").catch((err) => {
+      console.log(err);
+    });
   },
 };
 </script>
