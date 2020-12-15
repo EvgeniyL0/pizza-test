@@ -23,8 +23,10 @@ export const mutations = {
   },
   editItem(state, payload) {
     const employee = state.employees.find(item => item.id == payload.id);
-    for (let key in employee) {
-      employee[key] = payload[key];
+    if (employee !== undefined) {
+      for (let key in employee) {
+        employee[key] = payload[key];
+      }
     }
   }
 };

@@ -17,13 +17,13 @@ import ResultsTable from "../components/ResultsTable";
 export default {
   components: {
     ResultsFilter,
-    ResultsTable,
+    ResultsTable
   },
   data() {
     return {
       sortBy: "name",
       role: "all",
-      isArchive: false,
+      isArchive: false
     };
   },
   computed: {
@@ -31,11 +31,11 @@ export default {
       let results = [];
 
       if (this.role === "all") {
-        results = this.$store.state.employees.filter((item) => {
+        results = this.$store.state.employees.filter(item => {
           return item.isArchive === this.isArchive;
         });
       } else {
-        results = this.$store.state.employees.filter((item) => {
+        results = this.$store.state.employees.filter(item => {
           return item.role === this.role && item.isArchive === this.isArchive;
         });
       }
@@ -52,13 +52,16 @@ export default {
           );
         });
       }
-    },
+    }
   },
-  created() {
-    this.$store.dispatch("copyItemsToStore").catch((err) => {
-      console.log(err);
-    });
-  },
+  async fetch() {
+    await this.$store
+      .dispatch("copyItemsToStore")
+
+      .catch(err => {
+        console.log(err);
+      });
+  }
 };
 </script>
 

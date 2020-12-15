@@ -1,49 +1,39 @@
 <template>
-  <div class="profile">
-    <form class="profile__form" v-on:submit.prevent="updateData">
-      <input type="text" name="name" v-model="employee.name" />
-      <span class="profile__error-message" v-show="!validation.name"
-        >Введите фамилию и имя</span
-      >
-      <input type="text" name="phone" v-model="employee.phone" />
-      <span class="profile__error-message" v-show="!validation.phone"
-        >Введите телефон в формате +7 (ххх) ххх-хххх</span
-      >
-      <input type="text" name="birthday" v-model="employee.birthday" />
-      <span class="profile__error-message" v-show="!validation.birthday"
-        >Введите дату в формате ДД.ММ.ГГГГ</span
-      >
-      <select name="role" v-model="employee.role">
-        <option
-          v-for="(item, index) in $route.params.roles"
-          v-bind:key="index"
-          v-bind:value="item"
-        >
-          {{ item }}
-        </option>
-      </select>
-      <label class="profile__custom-checkbox">
-        <input type="checkbox" name="status" v-model="employee.isArchive" />
-        <span>В архиве</span>
-      </label>
-      <fieldset>
-        <button
-          class="profile__button"
-          type="submit"
-          v-bind:disabled="notValid"
-        >
-          Сохранить
-        </button>
-        <button class="profile__button" v-on:click.prevent="$router.push('/')">
-          Отмена
-        </button>
-      </fieldset>
-    </form>
-    <img
-      src="../../assets/images/avatar.png"
-      alt="employee-avatar"
-      class="profile__avatar"
-    />
+  <div>
+    <p v-if="$fetchState.pending">Loading...</p>
+    <p v-else-if="$fetchState.error">An error occurred :(</p>
+    <div class="profile" v-else>
+      <form class="profile__form" v-on:submit.prevent="updateData">
+        <input type="text" name="name" v-model="employee.name" />
+        <span class="profile__error-message" v-show="!validation.name">Введите фамилию и имя</span>
+        <input type="text" name="phone" v-model="employee.phone" />
+        <span
+          class="profile__error-message"
+          v-show="!validation.phone"
+        >Введите телефон в формате +7 (ххх) ххх-хххх</span>
+        <input type="text" name="birthday" v-model="employee.birthday" />
+        <span
+          class="profile__error-message"
+          v-show="!validation.birthday"
+        >Введите дату в формате ДД.ММ.ГГГГ</span>
+        <select name="role" v-model="employee.role">
+          <option
+            v-for="(item, index) in $store.getters.getRoles"
+            v-bind:key="index"
+            v-bind:value="item"
+          >{{ item }}</option>
+        </select>
+        <label class="profile__custom-checkbox">
+          <input type="checkbox" name="status" v-model="employee.isArchive" />
+          <span>В архиве</span>
+        </label>
+        <fieldset>
+          <button class="profile__button" type="submit" v-bind:disabled="notValid">Сохранить</button>
+          <button class="profile__button" v-on:click.prevent="$router.push('/')">Отмена</button>
+        </fieldset>
+      </form>
+      <img src="../../assets/images/avatar.png" alt="employee-avatar" class="profile__avatar" />
+    </div>
   </div>
 </template>
 
@@ -53,7 +43,7 @@ import { regexpName, regexpPhone, regexpDate } from "../../assets/constants.js";
 export default {
   data() {
     return {
-      employee: {},
+      employee: {}
     };
   },
   computed: {
@@ -61,58 +51,46 @@ export default {
       return {
         name: regexpName.test(this.employee.name),
         phone: regexpPhone.test(this.employee.phone),
-        birthday: regexpDate.test(this.employee.birthday),
+        birthday: regexpDate.test(this.employee.birthday)
       };
     },
     notValid() {
       const values = Object.values(this.validation);
-      return values.some((item) => item === false);
-    },
+      return values.some(item => item === false);
+    }
   },
   methods: {
-    getData() {
-      return fetch(
-        `https://pizza-base-22029-default-rtdb.firebaseio.com/employees/${
-          this.$route.params.id - 1
-        }.json`
-      )
-        .then((res) => {
-          if (res.ok) return res.json();
-          return Promise.reject(`${res.status} ${res.statusText}`);
-        })
-        .then((data) => {
-          console.log(data);
-          Object.assign(this.employee, data);
-        })
-        .catch((err) => {
-          console.log(err);
-        });
-    },
     updateData() {
       this.$store
         .dispatch("editItem", this.employee)
         .then(() => {
           this.$router.push("/");
         })
-        .catch((err) => {
+        .catch(err => {
           console.log(err);
         });
-    },
+    }
   },
   async fetch() {
-    this.employee = await fetch(
-      `https://pizza-base-22029-default-rtdb.firebaseio.com/employees/${
-        this.$route.params.id - 1
-      }.json`
-    )
-      .then((res) => {
-        if (res.ok) return res.json();
-        return Promise.reject(`${res.status} ${res.statusText}`);
-      })
-      .catch((err) => {
-        console.log(err);
-      });
-  },
+    if (this.$store.state.employees.length !== 0) {
+      Object.assign(
+        this.employee,
+        this.$store.getters.getEmployee(this.$route.params.id)
+      );
+    } else {
+      this.employee = await fetch(
+        `https://pizza-base-22029-default-rtdb.firebaseio.com/employees/${this
+          .$route.params.id - 1}.json`
+      )
+        .then(res => {
+          if (res.ok) return res.json();
+          return Promise.reject(`${res.status} ${res.statusText}`);
+        })
+        .catch(err => {
+          console.log(err);
+        });
+    }
+  }
 };
 </script>
 
