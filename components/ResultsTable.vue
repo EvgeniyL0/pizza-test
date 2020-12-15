@@ -56,7 +56,7 @@ export default {
 @media screen and (max-width: 768px) {
   .results-table {
     width: 100%;
-    font-size: 14px
+    font-size: 14px;
   }
 }
 

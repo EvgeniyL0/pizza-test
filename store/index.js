@@ -1,5 +1,3 @@
-import { getEmployees, editEmployee, addEmployee } from '../assets/request.js';
-
 export const state = () => ({
   employees: []
 });
@@ -36,7 +34,6 @@ export const actions = {
     return fetch('https://pizza-base-22029-default-rtdb.firebaseio.com/employees.json')
       .then(res => {
         if (res.ok) return res.json();
-        return Promise.reject(`${res.status} ${res.statusText}`);
       })
       .then(data => {
         data.forEach(item => {
@@ -51,9 +48,8 @@ export const actions = {
     })
       .then(res => {
         if (res.ok) {
-          return context.commit('editItem', payload);
+          context.commit('editItem', payload);
         }
-        return Promise.reject(`${res.status} ${res.statusText}`);
       })
   },
   addItem(context, payload) {
@@ -63,9 +59,8 @@ export const actions = {
     })
       .then(res => {
         if (res.ok) {
-          return context.commit('addItem', Object.assign({}, payload));
+          context.commit('addItem', Object.assign({}, payload));
         }
-        return Promise.reject(`${res.status} ${res.statusText}`);
       })
   }
 };

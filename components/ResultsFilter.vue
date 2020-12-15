@@ -88,14 +88,9 @@ export default {
   methods: {
     addNewEmployee(newEmployee) {
       newEmployee.id += 1;
-      this.$store
-        .dispatch("addItem", newEmployee)
-        .then(() => {
-          this.openPopup = false;
-        })
-        .catch((err) => {
-          console.log(err);
-        });
+      this.$store.dispatch("addItem", newEmployee).then(() => {
+        this.openPopup = false;
+      });
     },
   },
 };

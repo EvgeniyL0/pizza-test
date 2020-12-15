@@ -83,7 +83,7 @@ export default {
         role: "",
         phone: "",
         birthday: "",
-      }
+      },
     };
   },
   computed: {
@@ -103,9 +103,9 @@ export default {
   methods: {
     checkValidation() {
       if (!this.notValid) {
-        this.$emit('add-new', this.newEmployee);
+        this.$emit("add-new", this.newEmployee);
       }
-    }
+    },
   },
   created() {
     const numberOfItems = this.$store.state.employees.length;
@@ -227,7 +227,7 @@ export default {
   }
 }
 
-@media screen and (max-width: 425px){
+@media screen and (max-width: 425px) {
   .add-popup__form {
     width: 280px;
   }
