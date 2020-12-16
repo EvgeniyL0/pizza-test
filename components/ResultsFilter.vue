@@ -28,12 +28,18 @@
       </fieldset>
       <fieldset>
         <label for="role">Должность:</label>
-        <select name="role" v-model="role" v-on:change="$emit('change-role', role)">
+        <select
+          name="role"
+          v-model="role"
+          v-on:change="$emit('change-role', role)"
+        >
           <option
             v-for="(item, index) in $store.getters.getRoles"
             v-bind:key="index"
             v-bind:value="item"
-          >{{ item }}</option>
+          >
+            {{ item }}
+          </option>
         </select>
       </fieldset>
       <fieldset>
@@ -48,7 +54,13 @@
         </label>
       </fieldset>
       <fieldset>
-        <button type="button" class="filter__button" v-on:click="openPopup = true">+</button>
+        <button
+          type="button"
+          class="filter__button"
+          v-on:click="openPopup = true"
+        >
+          +
+        </button>
       </fieldset>
     </form>
     <add-popup
@@ -67,7 +79,7 @@ import ServerError from "../components/ServerError.vue";
 export default {
   components: {
     AddPopup,
-    ServerError
+    ServerError,
   },
   data() {
     return {
@@ -76,7 +88,7 @@ export default {
       isArchive: false,
       openPopup: false,
       showLoader: false,
-      error: false
+      error: false,
     };
   },
   methods: {
@@ -94,12 +106,12 @@ export default {
           this.showLoader = false;
           this.openPopup = false;
         })
-        .catch(err => {
+        .catch((err) => {
           this.showLoader = false;
           this.error = true;
         });
-    }
-  }
+    },
+  },
 };
 </script>
 

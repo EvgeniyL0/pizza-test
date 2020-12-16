@@ -1,3 +1,5 @@
+import axios from 'axios';
+
 export default {
   // Disable server-side rendering (https://go.nuxtjs.dev/ssr-mode)
   ssr: false,
@@ -45,5 +47,15 @@ export default {
 
   // Build Configuration (https://go.nuxtjs.dev/config-build)
   build: {
+  },
+
+  generate: {
+    routes() {
+      return axios.get('https://pizza-base-22029-default-rtdb.firebaseio.com/employees.json').then(res => {
+        return res.data.map(item => {
+          return '/employees/' + item.id
+        })
+      })
+    }
   }
 }
