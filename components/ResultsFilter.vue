@@ -1,5 +1,6 @@
 <template>
   <div class="filter">
+    <server-error v-if="error" />
     <form class="filter__form">
       <fieldset>
         <span>Сортировать по:</span>
@@ -27,18 +28,12 @@
       </fieldset>
       <fieldset>
         <label for="role">Должность:</label>
-        <select
-          name="role"
-          v-model="role"
-          v-on:change="$emit('change-role', role)"
-        >
+        <select name="role" v-model="role" v-on:change="$emit('change-role', role)">
           <option
             v-for="(item, index) in $store.getters.getRoles"
             v-bind:key="index"
             v-bind:value="item"
-          >
-            {{ item }}
-          </option>
+          >{{ item }}</option>
         </select>
       </fieldset>
       <fieldset>
@@ -53,29 +48,26 @@
         </label>
       </fieldset>
       <fieldset>
-        <button
-          type="button"
-          class="filter__button"
-          v-on:click="openPopup = true"
-        >
-          +
-        </button>
+        <button type="button" class="filter__button" v-on:click="openPopup = true">+</button>
       </fieldset>
     </form>
     <add-popup
       v-if="openPopup"
       v-on:add-new="addNewEmployee"
-      v-on:close-popup="openPopup = false"
+      v-on:close-popup="closePopup"
+      v-bind:loading="showLoader"
     />
   </div>
 </template>
 
 <script>
 import AddPopup from "../components/AddPopup.vue";
+import ServerError from "../components/ServerError.vue";
 
 export default {
   components: {
     AddPopup,
+    ServerError
   },
   data() {
     return {
@@ -83,16 +75,31 @@ export default {
       role: "all",
       isArchive: false,
       openPopup: false,
+      showLoader: false,
+      error: false
     };
   },
   methods: {
+    closePopup() {
+      this.openPopup = false;
+      this.error = false;
+    },
     addNewEmployee(newEmployee) {
       newEmployee.id += 1;
-      this.$store.dispatch("addItem", newEmployee).then(() => {
-        this.openPopup = false;
-      });
-    },
-  },
+      this.error = false;
+      this.showLoader = true;
+      this.$store
+        .dispatch("addItem", newEmployee)
+        .then(() => {
+          this.showLoader = false;
+          this.openPopup = false;
+        })
+        .catch(err => {
+          this.showLoader = false;
+          this.error = true;
+        });
+    }
+  }
 };
 </script>
 

@@ -1,60 +1,54 @@
 <template>
   <div class="profile">
+    <server-error v-if="error" />
     <form class="profile__form" v-on:submit.prevent="updateData">
       <input type="text" name="name" v-model="employee.name" />
-      <span class="profile__error-message" v-show="!validation.name"
-        >Введите фамилию и имя</span
-      >
+      <span class="profile__input-error-message" v-show="!validation.name">Введите фамилию и имя</span>
       <input type="text" name="phone" v-model="employee.phone" />
-      <span class="profile__error-message" v-show="!validation.phone"
-        >Введите телефон в формате +7 (ххх) ххх-хххх</span
-      >
+      <span
+        class="profile__input-error-message"
+        v-show="!validation.phone"
+      >Введите телефон в формате +7 (ххх) ххх-хххх</span>
       <input type="text" name="birthday" v-model="employee.birthday" />
-      <span class="profile__error-message" v-show="!validation.birthday"
-        >Введите дату в формате ДД.ММ.ГГГГ</span
-      >
+      <span
+        class="profile__input-error-message"
+        v-show="!validation.birthday"
+      >Введите дату в формате ДД.ММ.ГГГГ</span>
       <select name="role" v-model="employee.role">
-        <option
-          v-for="(item, index) in roles"
-          v-bind:key="index"
-          v-bind:value="item"
-        >
-          {{ item }}
-        </option>
+        <option v-for="(item, index) in roles" v-bind:key="index" v-bind:value="item">{{ item }}</option>
       </select>
       <label class="profile__custom-checkbox">
         <input type="checkbox" name="status" v-model="employee.isArchive" />
         <span>В архиве</span>
       </label>
       <fieldset>
-        <button
-          class="profile__button"
-          type="submit"
-          v-bind:disabled="notValid"
-        >
-          Сохранить
+        <button class="profile__button" type="submit" v-bind:disabled="notValid">
+          <loader v-if="loading" />
+          <p class="profile__button-label" v-else>Сохранить</p>
         </button>
-        <button class="profile__button" v-on:click.prevent="$router.push('/')">
-          Отмена
-        </button>
+        <button class="profile__button" v-on:click.prevent="$router.push('/')">Отмена</button>
       </fieldset>
     </form>
-    <img
-      src="../../assets/images/avatar.png"
-      alt="employee-avatar"
-      class="profile__avatar"
-    />
+    <img src="../../assets/images/avatar.png" alt="employee-avatar" class="profile__avatar" />
   </div>
 </template>
 
 <script>
 import { regexpName, regexpPhone, regexpDate } from "../../assets/constants.js";
+import Loader from "../../components/Loader.vue";
+import ServerError from "../../components/ServerError.vue";
 
 export default {
+  components: {
+    Loader,
+    ServerError
+  },
   data() {
     return {
       employee: {},
       roles: [],
+      loading: false,
+      error: false
     };
   },
   computed: {
@@ -62,32 +56,41 @@ export default {
       return {
         name: regexpName.test(this.employee.name),
         phone: regexpPhone.test(this.employee.phone),
-        birthday: regexpDate.test(this.employee.birthday),
+        birthday: regexpDate.test(this.employee.birthday)
       };
     },
     notValid() {
       const values = Object.values(this.validation);
-      return values.some((item) => item === false);
-    },
+      return values.some(item => item === false);
+    }
   },
   methods: {
     updateData() {
-      this.$store.dispatch("editItem", this.employee).then(() => {
-        this.$router.push("/");
-      });
-    },
+      this.error = false;
+      this.loading = true;
+      this.$store
+        .dispatch("editItem", this.employee)
+        .then(() => {
+          this.loading = false;
+          this.$router.push("/");
+        })
+        .catch(err => {
+          this.error = true;
+          this.loading = false;
+        });
+    }
   },
   created() {
     if (this.$store.state.employees.length !== 0) {
-      this.employee = this.$store.getters.getEmployee(this.$route.params.id);
-      this.roles = this.$store.getters.getRoles;
+      Object.assign(this.employee, this.$store.getters.getEmployee(this.$route.params.id));
+      this.roles = this.$store.getters.getRoles.slice();
       localStorage.setItem("employee", JSON.stringify(this.employee));
       localStorage.setItem("roles", JSON.stringify(this.roles));
     } else {
       this.employee = JSON.parse(localStorage.getItem("employee"));
       this.roles = JSON.parse(localStorage.getItem("roles"));
     }
-  },
+  }
 };
 </script>
 
@@ -194,7 +197,11 @@ export default {
   background-color: #a9a9a9;
 }
 
-.profile__error-message {
+.profile__button-label {
+  margin: 0;
+}
+
+.profile__input-error-message {
   display: block;
   font-size: 16px;
   color: red;
@@ -205,7 +212,7 @@ export default {
     font-size: 14px;
   }
 
-  .profile__error-message {
+  .profile__input-error-message {
     font-size: 14px;
   }
 }

@@ -15,9 +15,7 @@
           v-model="newEmployee.name"
           v-on:input.once="firstLoad = false"
         />
-        <span class="add-popup__error-message" v-show="!validation.name"
-          >Введите фамилию и имя</span
-        >
+        <span class="add-popup__error-message" v-show="!validation.name">Введите фамилию и имя</span>
       </fieldset>
       <fieldset>
         <input
@@ -27,9 +25,10 @@
           v-model="newEmployee.phone"
           v-on:input.once="firstLoad = false"
         />
-        <span class="add-popup__error-message" v-show="!validation.phone"
-          >Введите телефон в формате +7 (ххх) ххх-хххх</span
-        >
+        <span
+          class="add-popup__error-message"
+          v-show="!validation.phone"
+        >Введите телефон в формате +7 (ххх) ххх-хххх</span>
       </fieldset>
       <fieldset>
         <input
@@ -40,9 +39,10 @@
           v-model="newEmployee.birthday"
           v-on:input.once="firstLoad = false"
         />
-        <span class="add-popup__error-message" v-show="!validation.birthday"
-          >Введите дату в формате ДД.ММ.ГГГГ</span
-        >
+        <span
+          class="add-popup__error-message"
+          v-show="!validation.birthday"
+        >Введите дату в формате ДД.ММ.ГГГГ</span>
       </fieldset>
       <fieldset>
         <label for="role">Должность:</label>
@@ -51,20 +51,13 @@
             v-for="(item, index) in $store.getters.getRoles"
             v-bind:key="index"
             v-bind:value="item"
-          >
-            {{ item }}
-          </option>
+          >{{ item }}</option>
         </select>
-        <span class="add-popup__error-message" v-show="!validation.role"
-          >Выберите должность</span
-        >
+        <span class="add-popup__error-message" v-show="!validation.role">Выберите должность</span>
       </fieldset>
-      <button
-        class="add-popup__button"
-        type="submit"
-        v-bind:disabled="notValid"
-      >
-        Добавить
+      <button class="add-popup__button" type="submit" v-bind:disabled="notValid">
+        <loader v-if="loading" />
+        <p v-else>Добавить</p>
       </button>
     </form>
   </div>
@@ -72,8 +65,13 @@
 
 <script>
 import { regexpName, regexpPhone, regexpDate } from "../assets/constants.js";
+import Loader from "../components/Loader.vue";
 
 export default {
+  components: {
+    Loader
+  },
+  props: ["loading"],
   data() {
     return {
       newEmployee: {
@@ -82,8 +80,8 @@ export default {
         isArchive: false,
         role: "",
         phone: "",
-        birthday: "",
-      },
+        birthday: ""
+      }
     };
   },
   computed: {
@@ -92,25 +90,25 @@ export default {
         name: regexpName.test(this.newEmployee.name),
         phone: regexpPhone.test(this.newEmployee.phone),
         birthday: regexpDate.test(this.newEmployee.birthday),
-        role: this.newEmployee.role !== "",
+        role: this.newEmployee.role !== ""
       };
     },
     notValid() {
       const values = Object.values(this.validation);
-      return values.some((item) => item === false);
-    },
+      return values.some(item => item === false);
+    }
   },
   methods: {
     checkValidation() {
       if (!this.notValid) {
         this.$emit("add-new", this.newEmployee);
       }
-    },
+    }
   },
   created() {
     const numberOfItems = this.$store.state.employees.length;
     this.newEmployee.id = this.$store.state.employees[numberOfItems - 1].id;
-  },
+  }
 };
 </script>
 
