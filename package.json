@@ -14,5 +14,7 @@
     "nuxt": "^2.14.6",
     "push-dir": "^0.4.1"
   },
-  "devDependencies": {}
+  "devDependencies": {
+    "axios": "^0.21.0"
+  }
 }
