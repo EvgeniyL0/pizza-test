@@ -109,6 +109,7 @@ export default {
         .catch((err) => {
           this.showLoader = false;
           this.error = true;
+          newEmployee.id -= 1;
         });
     },
   },
