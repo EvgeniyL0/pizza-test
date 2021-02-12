@@ -1,51 +1,38 @@
 <template>
   <div class="profile">
     <server-error v-if="error" />
-    <form class="profile__form" v-on:submit.prevent="updateData">
-      <input type="text" name="name" v-model="employee.name" />
-      <span class="profile__input-error-message" v-show="!validation.name"
-        >Введите фамилию и имя</span
-      >
-      <input type="text" name="phone" v-model="employee.phone" />
-      <span class="profile__input-error-message" v-show="!validation.phone"
-        >Введите телефон в формате +7 (ххх) ххх-хххх</span
-      >
-      <input type="text" name="birthday" v-model="employee.birthday" />
-      <span class="profile__input-error-message" v-show="!validation.birthday"
-        >Введите дату в формате ДД.ММ.ГГГГ</span
-      >
-      <select name="role" v-model="employee.role">
-        <option
-          v-for="(item, index) in roles"
-          v-bind:key="index"
-          v-bind:value="item"
-        >
-          {{ item }}
-        </option>
+    <form class="profile__form" @submit.prevent="updateData">
+      <input type="text" name="name" class="profile__input" v-model="employee.name" />
+      <span
+        class="profile__error-message"
+        :class="{ 'profile__error-message_show': !validation.name }"
+      >Введите фамилию и имя</span>
+      <input type="text" name="phone" class="profile__input" v-model="employee.phone" />
+      <span
+        class="profile__error-message"
+        :class="{ 'profile__error-message_show': !validation.phone }"
+      >Введите телефон в формате +7 (ххх) ххх-хххх</span>
+      <input type="text" name="birthday" class="profile__input" v-model="employee.birthday" />
+      <span
+        class="profile__error-message"
+        :class="{ 'profile__error-message_show': !validation.birthday }"
+      >Введите дату в формате ДД.ММ.ГГГГ</span>
+      <select name="role" class="profile__select" v-model="employee.role">
+        <option v-for="(item, index) in roles" :key="index" :value="item">{{ item }}</option>
       </select>
       <label class="profile__custom-checkbox">
         <input type="checkbox" name="status" v-model="employee.isArchive" />
         <span>В архиве</span>
       </label>
       <fieldset>
-        <button
-          class="profile__button"
-          type="submit"
-          v-bind:disabled="notValid"
-        >
+        <button class="profile__button" type="submit" :disabled="notValid || loading">
           <loader v-if="loading" />
-          <p class="profile__button-label" v-else>Сохранить</p>
+          <span v-else>Сохранить</span>
         </button>
-        <button class="profile__button" v-on:click.prevent="$router.push('/')">
-          Отмена
-        </button>
+        <button class="profile__button" @click.prevent="$router.push('/')">Отмена</button>
       </fieldset>
     </form>
-    <img
-      src="../../assets/images/avatar.png"
-      alt="employee-avatar"
-      class="profile__avatar"
-    />
+    <img src="../../assets/images/avatar.png" alt="employee-avatar" class="profile__avatar" />
   </div>
 </template>
 
@@ -57,14 +44,14 @@ import ServerError from "../../components/ServerError.vue";
 export default {
   components: {
     Loader,
-    ServerError,
+    ServerError
   },
   data() {
     return {
       employee: {},
       roles: [],
       loading: false,
-      error: false,
+      error: false
     };
   },
   computed: {
@@ -72,13 +59,13 @@ export default {
       return {
         name: regexpName.test(this.employee.name),
         phone: regexpPhone.test(this.employee.phone),
-        birthday: regexpDate.test(this.employee.birthday),
+        birthday: regexpDate.test(this.employee.birthday)
       };
     },
     notValid() {
       const values = Object.values(this.validation);
-      return values.some((item) => item === false);
-    },
+      return values.some(item => item === false);
+    }
   },
   methods: {
     updateData() {
@@ -90,11 +77,11 @@ export default {
           this.loading = false;
           this.$router.push("/");
         })
-        .catch((err) => {
+        .catch(err => {
           this.error = true;
           this.loading = false;
         });
-    },
+    }
   },
   created() {
     if (this.$store.state.employees.length !== 0) {
@@ -109,11 +96,14 @@ export default {
       this.employee = JSON.parse(localStorage.getItem("employee"));
       this.roles = JSON.parse(localStorage.getItem("roles"));
     }
-  },
+  }
 };
 </script>
 
-<style>
+<style lang="scss">
+@import "assets/styles/blocks/button", "assets/styles/blocks/input",
+  "assets/styles/variables";
+
 .profile {
   width: 70%;
   margin-left: auto;
@@ -121,7 +111,17 @@ export default {
   margin-right: auto;
   display: flex;
   justify-content: center;
-  font-family: "Source Sans Pro", sans-serif;
+  font-family: $fonts;
+
+  @media screen and (max-width: 768px) {
+    font-size: 14px;
+  }
+
+  @media screen and (max-width: 625px) {
+    flex-direction: column;
+    align-items: center;
+    margin-top: 30px;
+  }
 }
 
 .profile__avatar {
@@ -130,6 +130,11 @@ export default {
   object-fit: cover;
   margin-left: 20px;
   margin-top: 20px;
+
+  @media screen and (max-width: 625px) {
+    order: 0;
+    margin: 0;
+  }
 }
 
 .profile__form {
@@ -139,30 +144,33 @@ export default {
   display: flex;
   flex-direction: column;
   align-items: center;
+  fieldset {
+    display: flex;
+    justify-content: space-between;
+    width: 90%;
+    border: none;
+    padding: 0;
+  }
+
+  @media screen and (max-width: 625px) {
+    order: 1;
+  }
 }
 
-.profile input {
+.profile__input {
+  @extend .input;
   min-width: 250px;
   height: 30px;
-  padding-left: 5px;
   margin-top: 25px;
 }
 
-.profile select {
+.profile__select {
+  @extend .input;
   min-width: 180px;
   height: 30px;
   margin-left: 10px;
   margin-top: 25px;
   margin-bottom: 25px;
-  box-sizing: content-box;
-}
-
-.profile__form fieldset {
-  display: flex;
-  justify-content: space-between;
-  width: 90%;
-  border: none;
-  padding: 0;
 }
 
 .profile__custom-checkbox {
@@ -171,85 +179,47 @@ export default {
   align-items: center;
   cursor: pointer;
   margin-bottom: 25px;
-}
-
-.profile__custom-checkbox > input {
-  position: absolute;
-  z-index: -1;
-  opacity: 0;
-}
-
-.profile__custom-checkbox > span::before {
-  content: "";
-  display: inline-block;
-  box-sizing: border-box;
-  width: 14px;
-  height: 14px;
-  margin-right: 8px;
-  border: 1px solid #a9a9a9;
-  background-position: center;
-  background-size: contain;
-  background-repeat: no-repeat;
-}
-
-.profile__custom-checkbox > input:checked + span::before {
-  background-color: #00a11e;
-  background-image: url("../../assets/images/checked.svg");
-  border: none;
+  input {
+    position: absolute;
+    z-index: -1;
+    opacity: 0;
+  }
+  span::before {
+    content: "";
+    display: inline-block;
+    box-sizing: border-box;
+    width: 14px;
+    height: 14px;
+    margin-right: 8px;
+    border: 1px solid #a9a9a9;
+    background-position: center;
+    background-size: contain;
+    background-repeat: no-repeat;
+  }
+  input:checked + span::before {
+    background-color: #00a11e;
+    background-image: url("../../assets/images/checked.svg");
+    border: none;
+  }
 }
 
 .profile__button {
+  @extend .button;
   width: 100px;
   height: 40px;
-  background-color: #00a11e;
-  color: white;
-  border: none;
-  border-radius: 6px;
-  cursor: pointer;
 }
 
-.profile__button:hover {
-  background-color: #007e17;
-}
-
-.profile__button:disabled {
-  background-color: #a9a9a9;
-}
-
-.profile__button-label {
-  margin: 0;
-}
-
-.profile__input-error-message {
+.profile__error-message {
   display: block;
   font-size: 16px;
-  color: red;
-}
+  color: white;
 
-@media screen and (max-width: 768px) {
-  .profile {
-    font-size: 14px;
-  }
-
-  .profile__input-error-message {
+  @media screen and (max-width: 768px) {
     font-size: 14px;
   }
 }
 
-@media screen and (max-width: 625px) {
-  .profile {
-    flex-direction: column;
-    align-items: center;
-    margin-top: 30px;
-  }
-
-  .profile__form {
-    order: 1;
-  }
-
-  .profile__avatar {
-    order: 0;
-    margin: 0;
-  }
+.profile__error-message_show {
+  color: #ef4444;
 }
 </style>

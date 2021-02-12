@@ -1,16 +1,14 @@
 <template>
   <div class="root">
     <p class="state state_loading" v-if="$fetchState.pending">Loading...</p>
-    <p class="state state_error" v-else-if="$fetchState.error">
-      An error occurred, reload page
-    </p>
+    <p class="state state_error" v-else-if="$fetchState.error">An error occurred, reload page</p>
     <div class="results" v-else>
       <results-filter
-        v-on:change-sort="sortBy = $event"
-        v-on:change-role="role = $event"
-        v-on:change-status="isArchive = $event"
+        @change-sort="sortBy = $event"
+        @change-role="role = $event"
+        @change-status="isArchive = $event"
       />
-      <results-table v-bind:list="employees" />
+      <results-table :list="employees" />
     </div>
   </div>
 </template>
@@ -23,13 +21,13 @@ import ResultsTable from "../components/ResultsTable";
 export default {
   components: {
     ResultsFilter,
-    ResultsTable,
+    ResultsTable
   },
   data() {
     return {
       sortBy: "name",
       role: "all",
-      isArchive: false,
+      isArchive: false
     };
   },
   computed: {
@@ -37,11 +35,11 @@ export default {
       let results = [];
 
       if (this.role === "all") {
-        results = this.$store.state.employees.filter((item) => {
+        results = this.$store.state.employees.filter(item => {
           return item.isArchive === this.isArchive;
         });
       } else {
-        results = this.$store.state.employees.filter((item) => {
+        results = this.$store.state.employees.filter(item => {
           return item.role === this.role && item.isArchive === this.isArchive;
         });
       }
@@ -58,18 +56,20 @@ export default {
           );
         });
       }
-    },
+    }
   },
   async fetch() {
     await this.$store.dispatch("copyItemsToStore");
-  },
+  }
 };
 </script>
 
-<style>
+<style lang="scss">
+@import "assets/styles/variables";
+
 .root {
   min-height: 100vh;
-  font-family: "Source Sans Pro", sans-serif;
+  font-family: $fonts;
 }
 
 .state {

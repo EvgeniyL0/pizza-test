@@ -1,69 +1,55 @@
 <template>
   <div class="add-popup">
-    <form class="add-popup__form" v-on:submit.prevent="checkValidation">
+    <form
+      class="add-popup__form"
+      @submit.prevent="$emit('add-new', newEmployee)"
+      @input.once="needsValidation = true"
+    >
       <img
         class="add-popup__close-icon"
         src="../assets/images/close.svg"
         alt="close-icon"
-        v-on:click="$emit('close-popup')"
+        @click="$emit('close-popup')"
       />
       <fieldset>
-        <input
-          type="text"
-          name="name"
-          placeholder="Фамилия Имя"
-          v-model="newEmployee.name"
-          v-on:input.once="firstLoad = false"
-        />
-        <span class="add-popup__error-message" v-show="!validation.name"
-          >Введите фамилию и имя</span
-        >
+        <label for="name">Фамилия Имя:</label>
+        <input type="text" name="name" class="add-popup__input" v-model="newEmployee.name" />
+        <span
+          class="add-popup__error-message"
+          :class="{ 'add-popup__error-message_show': !validation.name && needsValidation }"
+        >Введите фамилию и имя</span>
       </fieldset>
       <fieldset>
-        <input
-          type="tel"
-          name="phone"
-          placeholder="Телефон"
-          v-model="newEmployee.phone"
-          v-on:input.once="firstLoad = false"
-        />
-        <span class="add-popup__error-message" v-show="!validation.phone"
-          >Введите телефон в формате +7 (ххх) ххх-хххх</span
-        >
+        <label for="phone">Телефон:</label>
+        <input type="tel" name="phone" class="add-popup__input" v-model="newEmployee.phone" />
+        <span
+          class="add-popup__error-message"
+          :class="{ 'add-popup__error-message_show': !validation.phone && needsValidation }"
+        >Введите телефон в формате +7 (ххх) ххх-хххх</span>
       </fieldset>
       <fieldset>
-        <input
-          type="text"
-          name="birthday"
-          class="add-popup__input"
-          placeholder="Дата рождения"
-          v-model="newEmployee.birthday"
-          v-on:input.once="firstLoad = false"
-        />
-        <span class="add-popup__error-message" v-show="!validation.birthday"
-          >Введите дату в формате ДД.ММ.ГГГГ</span
-        >
+        <label for="birthday">Дата рождения:</label>
+        <input type="text" name="birthday" class="add-popup__input" v-model="newEmployee.birthday" />
+        <span
+          class="add-popup__error-message"
+          :class="{ 'add-popup__error-message_show': !validation.birthday && needsValidation }"
+        >Введите дату в формате ДД.ММ.ГГГГ</span>
       </fieldset>
       <fieldset>
         <label for="role">Должность:</label>
-        <select name="role" v-model="newEmployee.role">
+        <select class="add-popup__select" name="role" v-model="newEmployee.role">
           <option
             v-for="(item, index) in $store.getters.getRoles"
-            v-bind:key="index"
-            v-bind:value="item"
-          >
-            {{ item }}
-          </option>
+            :key="index"
+            :value="item"
+          >{{ item }}</option>
         </select>
-        <span class="add-popup__error-message" v-show="!validation.role"
-          >Выберите должность</span
-        >
+        <span
+          class="add-popup__error-message"
+          :class="{ 'add-popup__error-message_show': !validation.role && needsValidation }"
+        >Выберите должность</span>
       </fieldset>
-      <button
-        class="add-popup__button"
-        type="submit"
-        v-bind:disabled="notValid"
-      >
+      <button class="add-popup__button" type="submit" :disabled="notValid || loading">
         <loader v-if="loading" />
         <p v-else>Добавить</p>
       </button>
@@ -77,9 +63,11 @@ import Loader from "../components/Loader.vue";
 
 export default {
   components: {
-    Loader,
+    Loader
   },
-  props: ["loading"],
+  props: {
+    loading: Boolean
+  },
   data() {
     return {
       newEmployee: {
@@ -88,8 +76,9 @@ export default {
         isArchive: false,
         role: "",
         phone: "",
-        birthday: "",
+        birthday: ""
       },
+      needsValidation: false
     };
   },
   computed: {
@@ -98,29 +87,24 @@ export default {
         name: regexpName.test(this.newEmployee.name),
         phone: regexpPhone.test(this.newEmployee.phone),
         birthday: regexpDate.test(this.newEmployee.birthday),
-        role: this.newEmployee.role !== "",
+        role: this.newEmployee.role !== ""
       };
     },
     notValid() {
       const values = Object.values(this.validation);
-      return values.some((item) => item === false);
-    },
-  },
-  methods: {
-    checkValidation() {
-      if (!this.notValid) {
-        this.$emit("add-new", this.newEmployee);
-      }
-    },
+      return values.some(item => item === false);
+    }
   },
   created() {
     const numberOfItems = this.$store.state.employees.length;
     this.newEmployee.id = this.$store.state.employees[numberOfItems - 1].id;
-  },
+  }
 };
 </script>
 
-<style>
+<style lang="scss">
+@import "assets/styles/blocks/button", "assets/styles/blocks/input";
+
 .add-popup {
   position: fixed;
   top: 0;
@@ -145,46 +129,73 @@ export default {
   background-color: white;
   border-radius: 4px;
   text-align: center;
+  fieldset {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    border: none;
+    padding: 0;
+    label {
+      margin-bottom: 10px;
+    }
+  }
+
+  @media screen and (max-width: 768px) {
+    width: 350px;
+  }
+
+  @media screen and (max-width: 580px) {
+    width: 300px;
+    padding-left: 10px;
+    padding-right: 10px;
+    font-size: 14px;
+  }
+
+  @media screen and (max-width: 425px) {
+    width: 280px;
+  }
 }
 
-.add-popup__form fieldset {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  border: none;
-  padding: 0;
-}
-
-.add-popup input {
+.add-popup__input {
+  @extend .input;
   width: 300px;
-  height: 30px;
-  padding-left: 5px;
+  height: 35px;
+
+  @media screen and (max-width: 580px) {
+    width: 230px;
+  }
 }
 
-.add-popup select {
+.add-popup__select {
+  @extend .input;
   width: 180px;
-  height: 30px;
-  margin-top: 10px;
+  height: 35px;
   box-sizing: content-box;
 }
 
+.add-popup__error-message {
+  font-size: 16px;
+  color: white;
+  margin-bottom: 15px;
+
+  @media screen and (max-width: 580px) {
+    font-size: 14px;
+  }
+}
+
+.add-popup__error-message_show {
+  color: #ef4444;
+}
+
 .add-popup__button {
+  @extend .button;
   width: 230px;
   height: 50px;
-  background-color: #00a11e;
-  color: white;
-  border: none;
-  border-radius: 6px;
-  cursor: pointer;
-  display: inline-block;
-}
+  margin-top: 15px;
 
-.add-popup__button:hover {
-  background-color: #007e17;
-}
-
-.add-popup__button:disabled {
-  background-color: #a9a9a9;
+  @media screen and (max-width: 580px) {
+    width: 200px;
+  }
 }
 
 .add-popup__close-icon {
@@ -192,50 +203,12 @@ export default {
   top: -27px;
   right: -27px;
   cursor: pointer;
-}
 
-.add-popup__error-message {
-  font-size: 16px;
-  color: red;
-}
-
-@media screen and (max-width: 768px) {
-  .add-popup__form {
-    width: 350px;
-  }
-}
-
-@media screen and (max-width: 580px) {
-  .add-popup__form {
-    width: 300px;
-    padding-left: 10px;
-    padding-right: 10px;
-    font-size: 14px;
-  }
-
-  .add-popup input {
-    width: 230px;
-  }
-
-  .add-popup__error-message {
-    font-size: 14px;
-  }
-
-  .add-popup__button {
-    width: 200px;
-  }
-
-  .add-popup__close-icon {
+  @media screen and (max-width: 580px) {
     top: -20px;
     right: -20px;
     width: 20px;
     height: 20px;
-  }
-}
-
-@media screen and (max-width: 425px) {
-  .add-popup__form {
-    width: 280px;
   }
 }
 </style>

@@ -11,14 +11,14 @@
       </tr>
     </thead>
     <tbody>
-      <tr class="results-table__row" v-for="item in list" v-bind:key="item.id">
+      <tr class="results-table__row" v-for="item in list" :key="item.id">
         <td>{{ item.name }}</td>
         <td>{{ item.role }}</td>
         <td>{{ item.birthday }}</td>
         <td>{{ item.phone }}</td>
-        <td>{{ item.isArchive }}</td>
+        <td>{{ item.isArchive ? 'да' : 'нет' }}</td>
         <td>
-          <nuxt-link v-bind:to="`/employees/${item.id}`">
+          <nuxt-link :to="`/employees/${item.id}`">
             <img src="../assets/images/edit.svg" alt="edit-icon" />
           </nuxt-link>
         </td>
@@ -29,40 +29,37 @@
 
 <script>
 export default {
-  props: ["list"],
+  props: {
+    list: Array
+  }
 };
 </script>
 
-<style>
+<style lang="scss">
 .results-table {
   width: 80%;
   margin: auto;
   text-align: center;
   border-collapse: collapse;
-}
+  thead {
+    th {
+      border-bottom: 1px solid #d1d5db;
+    }
+  }
 
-.results-table thead th {
-  border-bottom: 1px solid #ededed;
+  @media screen and (max-width: 768px) {
+    width: 100%;
+    font-size: 14px;
+  }
+  @media screen and (max-width: 425px) {
+    font-size: 12px;
+  }
 }
 
 .results-table__row {
   height: 50px;
-}
-
-.results-table__row:nth-child(even) {
-  background-color: #f8f9fa;
-}
-
-@media screen and (max-width: 768px) {
-  .results-table {
-    width: 100%;
-    font-size: 14px;
-  }
-}
-
-@media screen and (max-width: 425px) {
-  .results-table {
-    font-size: 12px;
+  &:nth-child(even) {
+    background-color: #eff6ff;
   }
 }
 </style>

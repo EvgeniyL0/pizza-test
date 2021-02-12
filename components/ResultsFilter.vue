@@ -11,7 +11,7 @@
             value="name"
             checked
             v-model="sort"
-            v-on:change="$emit('change-sort', sort)"
+            @change="$emit('change-sort', sort)"
           />
           <span>Имя</span>
         </label>
@@ -21,7 +21,7 @@
             name="sort"
             value="birthday"
             v-model="sort"
-            v-on:change="$emit('change-sort', sort)"
+            @change="$emit('change-sort', sort)"
           />
           <span>Дата рожд.</span>
         </label>
@@ -30,16 +30,15 @@
         <label for="role">Должность:</label>
         <select
           name="role"
+          class="filter__select"
           v-model="role"
-          v-on:change="$emit('change-role', role)"
+          @change="$emit('change-role', role)"
         >
           <option
             v-for="(item, index) in $store.getters.getRoles"
-            v-bind:key="index"
-            v-bind:value="item"
-          >
-            {{ item }}
-          </option>
+            :key="index"
+            :value="item"
+          >{{ item }}</option>
         </select>
       </fieldset>
       <fieldset>
@@ -48,26 +47,22 @@
             type="checkbox"
             name="status"
             v-model="isArchive"
-            v-on:change="$emit('change-status', isArchive)"
+            @change="$emit('change-status', isArchive)"
           />
           <span>В архиве</span>
         </label>
       </fieldset>
       <fieldset>
-        <button
-          type="button"
-          class="filter__button"
-          v-on:click="openPopup = true"
-        >
-          +
+        <button type="button" class="filter__button" @click="openPopup = true">
+          <img src="../assets/images/person-plus.svg" alt />
         </button>
       </fieldset>
     </form>
     <add-popup
       v-if="openPopup"
-      v-on:add-new="addNewEmployee"
-      v-on:close-popup="closePopup"
-      v-bind:loading="showLoader"
+      @add-new="addNewEmployee"
+      @close-popup="closePopup"
+      :loading="showLoader"
     />
   </div>
 </template>
@@ -79,7 +74,7 @@ import ServerError from "../components/ServerError.vue";
 export default {
   components: {
     AddPopup,
-    ServerError,
+    ServerError
   },
   data() {
     return {
@@ -88,7 +83,7 @@ export default {
       isArchive: false,
       openPopup: false,
       showLoader: false,
-      error: false,
+      error: false
     };
   },
   methods: {
@@ -106,21 +101,27 @@ export default {
           this.showLoader = false;
           this.openPopup = false;
         })
-        .catch((err) => {
+        .catch(err => {
           this.showLoader = false;
           this.error = true;
           newEmployee.id -= 1;
         });
-    },
-  },
+    }
+  }
 };
 </script>
 
-<style>
+<style lang="scss">
+@import "assets/styles/blocks/button", "assets/styles/blocks/input";
+
 .filter {
   margin-top: 20px;
   margin-bottom: 20px;
   display: flex;
+
+  @media screen and (max-width: 580px) {
+    margin-bottom: 10px;
+  }
 }
 
 .filter__form {
@@ -132,117 +133,93 @@ export default {
   display: flex;
   justify-content: space-between;
   align-items: center;
-}
+  fieldset {
+    padding: 0;
+    border: none;
 
-.filter__form fieldset {
-  padding: 0;
-  border: none;
+    @media screen and (max-width: 580px) {
+      margin-bottom: 20px;
+    }
+  }
+
+  @media screen and (max-width: 1024px) {
+    width: 90%;
+  }
+  @media screen and (max-width: 768px) {
+    font-size: 14px;
+  }
+
+  @media screen and (max-width: 580px) {
+    flex-direction: column;
+    align-items: flex-start;
+  }
 }
 
 .filter__custom-radio {
   cursor: pointer;
-}
+  input {
+    position: absolute;
+    z-index: -1;
+    opacity: 0;
+  }
+  span {
+    display: inline-block;
+    margin-left: 5px;
+    text-align: center;
+    border-radius: 2px;
 
-.filter__custom-radio > input {
-  position: absolute;
-  z-index: -1;
-  opacity: 0;
-}
-
-.filter__custom-radio > span {
-  display: inline-block;
-  margin-left: 5px;
-  text-align: center;
-  border-radius: 2px;
-}
-
-.filter__custom-radio > input:checked + span {
-  font-weight: bold;
+    @media screen and (max-width: 768px) {
+      margin-left: 3px;
+    }
+  }
+  input:checked + span {
+    font-weight: bold;
+  }
 }
 
 .filter__custom-checkbox {
   display: flex;
   align-items: center;
   cursor: pointer;
+  input {
+    position: absolute;
+    z-index: -1;
+    opacity: 0;
+  }
+  span::before {
+    content: "";
+    display: inline-block;
+    box-sizing: border-box;
+    width: 14px;
+    height: 14px;
+    margin-right: 8px;
+    border: 1px solid #d1d5db;
+    border-radius: 2px;
+    background-position: center;
+    background-size: contain;
+    background-repeat: no-repeat;
+  }
+  input:checked + span::before {
+    background-color: #2563eb;
+    background-image: url("../assets/images/checked.svg");
+    border: none;
+  }
 }
 
-.filter__custom-checkbox > input {
-  position: absolute;
-  z-index: -1;
-  opacity: 0;
-}
-
-.filter__custom-checkbox > span::before {
-  content: "";
-  display: inline-block;
-  box-sizing: border-box;
-  width: 14px;
-  height: 14px;
-  margin-right: 8px;
-  border: 1px solid #a9a9a9;
-  background-position: center;
-  background-size: contain;
-  background-repeat: no-repeat;
-}
-
-.filter__custom-checkbox > input:checked + span::before {
-  background-color: #00a11e;
-  background-image: url("../assets/images/checked.svg");
-  border: none;
+.filter__select {
+  @extend .input;
+  width: 90px;
+  margin-left: 10px;
+  box-sizing: content-box;
 }
 
 .filter__button {
-  width: 60px;
+  @extend .button;
+  width: 50px;
   height: 30px;
-  background-color: #00a11e;
-  font-weight: bold;
-  color: white;
-  border: none;
-  border-radius: 6px;
-  cursor: pointer;
-  display: inline-block;
-}
 
-.filter__button:hover {
-  background-color: #007e17;
-}
-
-@media screen and (max-width: 1024px) {
-  .filter__form {
-    width: 90%;
-  }
-}
-
-@media screen and (max-width: 768px) {
-  .filter__form {
-    font-size: 14px;
-  }
-
-  .filter__custom-radio > span {
-    margin-left: 3px;
-  }
-
-  .filter__button {
+  @media screen and (max-width: 768px) {
     width: 50px;
-  }
-}
-
-@media screen and (max-width: 580px) {
-  .filter {
-    margin-bottom: 10px;
-  }
-
-  .filter__form {
-    flex-direction: column;
-    align-items: flex-start;
-  }
-
-  .filter__form fieldset {
-    margin-bottom: 20px;
-  }
-
-  .filter__form fieldset:last-of-type {
-    margin-bottom: 0;
   }
 }
 </style>
