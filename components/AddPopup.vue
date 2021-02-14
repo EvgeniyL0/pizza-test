@@ -13,45 +13,94 @@
       />
       <fieldset>
         <label for="name">Фамилия Имя:</label>
-        <input type="text" name="name" class="add-popup__input" v-model="newEmployee.name" />
+        <input
+          type="text"
+          name="name"
+          class="add-popup__input"
+          v-model="newEmployee.name"
+        />
         <span
-          class="add-popup__error-message"
-          :class="{ 'add-popup__error-message_show': !validation.name && needsValidation }"
-        >Введите фамилию и имя</span>
+          :class="[
+            'add-popup__error-message',
+            {
+              'add-popup__error-message_show':
+                !validation.name && needsValidation,
+            },
+          ]"
+          >Введите фамилию и имя</span
+        >
       </fieldset>
       <fieldset>
         <label for="phone">Телефон:</label>
-        <input type="tel" name="phone" class="add-popup__input" v-model="newEmployee.phone" />
+        <input
+          type="tel"
+          name="phone"
+          class="add-popup__input"
+          v-model="newEmployee.phone"
+        />
         <span
-          class="add-popup__error-message"
-          :class="{ 'add-popup__error-message_show': !validation.phone && needsValidation }"
-        >Введите телефон в формате +7 (ххх) ххх-хххх</span>
+          :class="[
+            'add-popup__error-message',
+            {
+              'add-popup__error-message_show':
+                !validation.phone && needsValidation,
+            },
+          ]"
+          >Введите телефон в формате +7 (ххх) ххх-хххх</span
+        >
       </fieldset>
       <fieldset>
         <label for="birthday">Дата рождения:</label>
-        <input type="text" name="birthday" class="add-popup__input" v-model="newEmployee.birthday" />
+        <input
+          type="text"
+          name="birthday"
+          class="add-popup__input"
+          v-model="newEmployee.birthday"
+        />
         <span
-          class="add-popup__error-message"
-          :class="{ 'add-popup__error-message_show': !validation.birthday && needsValidation }"
-        >Введите дату в формате ДД.ММ.ГГГГ</span>
+          :class="[
+            'add-popup__error-message',
+            {
+              'add-popup__error-message_show':
+                !validation.birthday && needsValidation,
+            },
+          ]"
+          >Введите дату в формате ДД.ММ.ГГГГ</span
+        >
       </fieldset>
       <fieldset>
         <label for="role">Должность:</label>
-        <select class="add-popup__select" name="role" v-model="newEmployee.role">
+        <select
+          class="add-popup__select"
+          name="role"
+          v-model="newEmployee.role"
+        >
           <option
             v-for="(item, index) in $store.getters.getRoles"
             :key="index"
             :value="item"
-          >{{ item }}</option>
+          >
+            {{ item }}
+          </option>
         </select>
         <span
-          class="add-popup__error-message"
-          :class="{ 'add-popup__error-message_show': !validation.role && needsValidation }"
-        >Выберите должность</span>
+          :class="[
+            'add-popup__error-message',
+            {
+              'add-popup__error-message_show':
+                !validation.role && needsValidation,
+            },
+          ]"
+          >Выберите должность</span
+        >
       </fieldset>
-      <button class="add-popup__button" type="submit" :disabled="notValid || loading">
+      <button
+        class="add-popup__button"
+        type="submit"
+        :disabled="notValid || loading"
+      >
         <loader v-if="loading" />
-        <p v-else>Добавить</p>
+        <span v-else>Добавить</span>
       </button>
     </form>
   </div>
@@ -63,10 +112,10 @@ import Loader from "../components/Loader.vue";
 
 export default {
   components: {
-    Loader
+    Loader,
   },
   props: {
-    loading: Boolean
+    loading: Boolean,
   },
   data() {
     return {
@@ -76,9 +125,9 @@ export default {
         isArchive: false,
         role: "",
         phone: "",
-        birthday: ""
+        birthday: "",
       },
-      needsValidation: false
+      needsValidation: false,
     };
   },
   computed: {
@@ -87,23 +136,24 @@ export default {
         name: regexpName.test(this.newEmployee.name),
         phone: regexpPhone.test(this.newEmployee.phone),
         birthday: regexpDate.test(this.newEmployee.birthday),
-        role: this.newEmployee.role !== ""
+        role: this.newEmployee.role !== "",
       };
     },
     notValid() {
       const values = Object.values(this.validation);
-      return values.some(item => item === false);
-    }
+      return values.some((item) => item === false);
+    },
   },
   created() {
     const numberOfItems = this.$store.state.employees.length;
     this.newEmployee.id = this.$store.state.employees[numberOfItems - 1].id;
-  }
+  },
 };
 </script>
 
 <style lang="scss">
-@import "assets/styles/blocks/button", "assets/styles/blocks/input";
+@import "assets/styles/blocks/button.scss",
+  "assets/styles/blocks/form-input.scss";
 
 .add-popup {
   position: fixed;
@@ -157,7 +207,7 @@ export default {
 }
 
 .add-popup__input {
-  @extend .input;
+  @extend %form-input;
   width: 300px;
   height: 35px;
 
@@ -167,7 +217,7 @@ export default {
 }
 
 .add-popup__select {
-  @extend .input;
+  @extend %form-input;
   width: 180px;
   height: 35px;
   box-sizing: content-box;
@@ -184,11 +234,12 @@ export default {
 }
 
 .add-popup__error-message_show {
+  @extend .add-popup__error-message;
   color: #ef4444;
 }
 
 .add-popup__button {
-  @extend .button;
+  @extend %button;
   width: 230px;
   height: 50px;
   margin-top: 15px;

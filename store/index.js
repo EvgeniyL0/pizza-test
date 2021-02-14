@@ -7,7 +7,7 @@ export const getters = {
     return state.employees.find(item => item.id == id);
   },
   getRoles(state) {
-    const roles = ['all'];
+    const roles = ['все'];
     state.employees.forEach(item => {
       if (!roles.includes(item.role)) roles.push(item.role);
     });

@@ -38,7 +38,9 @@
             v-for="(item, index) in $store.getters.getRoles"
             :key="index"
             :value="item"
-          >{{ item }}</option>
+          >
+            {{ item }}
+          </option>
         </select>
       </fieldset>
       <fieldset>
@@ -74,16 +76,16 @@ import ServerError from "../components/ServerError.vue";
 export default {
   components: {
     AddPopup,
-    ServerError
+    ServerError,
   },
   data() {
     return {
       sort: "name",
-      role: "all",
+      role: "все",
       isArchive: false,
       openPopup: false,
       showLoader: false,
-      error: false
+      error: false,
     };
   },
   methods: {
@@ -101,18 +103,20 @@ export default {
           this.showLoader = false;
           this.openPopup = false;
         })
-        .catch(err => {
+        .catch((err) => {
           this.showLoader = false;
           this.error = true;
           newEmployee.id -= 1;
         });
-    }
-  }
+    },
+  },
 };
 </script>
 
 <style lang="scss">
-@import "assets/styles/blocks/button", "assets/styles/blocks/input";
+@import "assets/styles/blocks/button.scss",
+  "assets/styles/blocks/form-input.scss",
+  "assets/styles/blocks/form-checkbox.scss";
 
 .filter {
   margin-top: 20px;
@@ -178,43 +182,18 @@ export default {
 }
 
 .filter__custom-checkbox {
-  display: flex;
-  align-items: center;
-  cursor: pointer;
-  input {
-    position: absolute;
-    z-index: -1;
-    opacity: 0;
-  }
-  span::before {
-    content: "";
-    display: inline-block;
-    box-sizing: border-box;
-    width: 14px;
-    height: 14px;
-    margin-right: 8px;
-    border: 1px solid #d1d5db;
-    border-radius: 2px;
-    background-position: center;
-    background-size: contain;
-    background-repeat: no-repeat;
-  }
-  input:checked + span::before {
-    background-color: #2563eb;
-    background-image: url("../assets/images/checked.svg");
-    border: none;
-  }
+  @extend %form-checkbox;
 }
 
 .filter__select {
-  @extend .input;
-  width: 90px;
+  @extend %form-input;
+  width: 120px;
   margin-left: 10px;
   box-sizing: content-box;
 }
 
 .filter__button {
-  @extend .button;
+  @extend %button;
   width: 50px;
   height: 30px;
 

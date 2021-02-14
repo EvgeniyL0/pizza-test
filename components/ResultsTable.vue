@@ -16,7 +16,7 @@
         <td>{{ item.role }}</td>
         <td>{{ item.birthday }}</td>
         <td>{{ item.phone }}</td>
-        <td>{{ item.isArchive ? 'да' : 'нет' }}</td>
+        <td>{{ item.isArchive ? "да" : "нет" }}</td>
         <td>
           <nuxt-link :to="`/employees/${item.id}`">
             <img src="../assets/images/edit.svg" alt="edit-icon" />
@@ -30,8 +30,8 @@
 <script>
 export default {
   props: {
-    list: Array
-  }
+    list: Array,
+  },
 };
 </script>
 

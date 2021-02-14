@@ -2,7 +2,7 @@
   <div class="loader"></div>
 </template>
 
-<style>
+<style lang="scss">
 @keyframes rotation {
   from {
     transform: rotate(0deg);
@@ -17,7 +17,7 @@
   height: 20px;
   margin-left: auto;
   margin-right: auto;
-  border: 2px solid #dcdcdc;
+  border: 2px solid #d1d5db;
   border-radius: 100%;
   border-left-color: white;
   animation: rotation 1s linear infinite;

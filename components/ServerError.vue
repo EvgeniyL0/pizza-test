@@ -1,16 +1,16 @@
 <template>
-  <p class="server-error-message">Server error. Please, try again</p>
+  <p class="server-error-message">Ошибка сервера. Попробуйте ещё раз</p>
 </template>
 
-<style>
+<style lang="scss">
 .server-error-message {
-  position: absolute;
-  left: 10px;
-  top: 10px;
+  position: fixed;
+  left: 0;
+  top: 0;
   margin: 0;
-  padding: 5px;
-  background-color: #ff6347;
-  border-radius: 2px;
+  padding: 8px;
+  background-color: #fca5a5;
+  border-bottom-right-radius: 6px;
   z-index: 1;
 }
 </style>
