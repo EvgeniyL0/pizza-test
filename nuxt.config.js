@@ -5,9 +5,10 @@ export default {
   // Target (https://go.nuxtjs.dev/config-target)
   target: 'server',
 
-  router: {
+  /*router: {
     base: '/pizza-test/'
   },
+  */
 
   // Global page headers (https://go.nuxtjs.dev/config-head)
   head: {
