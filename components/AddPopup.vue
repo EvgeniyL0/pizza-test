@@ -76,7 +76,7 @@
           v-model="newEmployee.role"
         >
           <option
-            v-for="(item, index) in $store.getters.getRoles"
+            v-for="(item, index) in $store.getters.getRoles.slice(1)"
             :key="index"
             :value="item"
           >

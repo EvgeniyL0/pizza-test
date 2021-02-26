@@ -1,9 +1,9 @@
 export default {
   // Disable server-side rendering (https://go.nuxtjs.dev/ssr-mode)
-  ssr: false,
+  //ssr: false,
 
   // Target (https://go.nuxtjs.dev/config-target)
-  target: 'static',
+  target: 'server',
 
   router: {
     base: '/pizza-test/'
