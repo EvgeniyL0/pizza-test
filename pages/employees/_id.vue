@@ -121,17 +121,25 @@ export default {
   },
   created() {
     if (this.$store.state.employees.length !== 0) {
-      Object.assign(
+      this.employee = Object.assign(
+        {},
         this.employee,
         this.$store.getters.getEmployee(this.$route.params.id)
       );
-      this.roles = this.$store.getters.getRoles.slice();
+      this.roles = this.$store.getters.getRoles.slice(1);
       localStorage.setItem("employee", JSON.stringify(this.employee));
       localStorage.setItem("roles", JSON.stringify(this.roles));
     } else {
       this.employee = JSON.parse(localStorage.getItem("employee"));
       this.roles = JSON.parse(localStorage.getItem("roles"));
     }
+  },
+  beforeRouteLeave(to, from, next) {
+    Object.assign(
+      this.employee,
+      this.$store.getters.getEmployee(this.$route.params.id)
+    );
+    next();
   },
 };
 </script>
