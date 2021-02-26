@@ -1,15 +1,4 @@
 export default {
-  // Disable server-side rendering (https://go.nuxtjs.dev/ssr-mode)
-  //ssr: false,
-
-  // Target (https://go.nuxtjs.dev/config-target)
-  target: 'server',
-
-  /*router: {
-    base: '/pizza-test/'
-  },
-  */
-
   // Global page headers (https://go.nuxtjs.dev/config-head)
   head: {
     title: 'pizza-test',
@@ -19,7 +8,7 @@ export default {
       { hid: 'description', name: 'description', content: '' }
     ],
     link: [
-      { rel: 'icon', type: 'image/x-icon', href: '/pizza-test/favicon.ico' },
+      { rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' },
       { rel: 'stylesheet', href: 'https://fonts.googleapis.com/css2?family=Source+Sans+Pro:wght@300;600&display=swap' }
     ]
   },

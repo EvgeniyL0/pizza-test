@@ -1,4 +1,4 @@
-## [Pizza](https://evgeniyl0.github.io/pizza-test/)  
+## [Pizza](https://pizza-evgeniyl0.herokuapp.com/)  
 Пример SPA для просмотра и редактирования информации о работниках пиццерии, реализованного с  использованием фреймворка Nuxt.js. Для хранения данных используется база данных Firebase.
 
 ### Функционал:
